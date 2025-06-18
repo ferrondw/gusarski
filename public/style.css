@@ -192,7 +192,7 @@ main {
         width: 370px;
         height: min-content;
         max-height: 300px;
-        border-radius: 0px 0px 16px 16px;
+        border-radius: 0px 0px 24px 24px;
         background: rgba(15, 23, 42, 0.9);
         border: 1px solid rgba(148, 163, 184, 0.1);
         backdrop-filter: blur(20px);
