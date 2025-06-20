@@ -43,12 +43,6 @@ async function search(overwriteQuery) {
         emptyMessage.style.display = "none";
         resultsContainer.innerHTML = "";
         results.forEach(result => {
-            if (!result.title || !result.year || !result.poster || !result.amount) {
-                emptyMessage.style.display = "flex";
-                emptyMessage.innerText = "Provider did not return a valid response";
-                return;
-            }
-
             const defaultPoster = `<svg class="defaultPoster" width="24" height="24" viewBox="0 0 24 24">
             <path d="M20 6h-5.59l2.29-2.29-1.41-1.41L12 5.59 8.71 2.3 7.3 3.71 9.59 6H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2M4 19V8h16v11z"></path>
             </svg>`;
@@ -64,8 +58,8 @@ async function search(overwriteQuery) {
             <div class="info">
             <div class="title">${result.title || 'Unknown'}</div>
             <div class="details">
-            <span class="amount">${result.amount || ''}</span>
-            <span class="year">${result.year || 'Unknown'}</span>
+            <span class="amount">${result.amount || '?'}</span>
+            <span class="year">${result.year || '?'}</span>
             </div>
             </div>
             <button class="downloadButton" title="Download">
@@ -98,7 +92,7 @@ function renderQueue(queue) {
         if (task.state === 'pending') {
             button = `<button onclick="forceTask(${task.id})">Force</button>`;
         } else if (task.state === 'downloading') {
-            button = `<button onclick="abortTask(${task.id})">Abort</button>`;
+            button = ``; // removed aborting tasks due to lack of skill (idk how to properly implement it)
         } else {
             button = `<button onclick="removeTask(${task.id})">Remove</button>`;
         }
@@ -116,10 +110,6 @@ function renderQueue(queue) {
 
 function forceTask(id) {
     socket.send(JSON.stringify({ action: 'force', id }));
-}
-
-function abortTask(id) {
-    socket.send(JSON.stringify({ action: 'abort', id }));
 }
 
 function removeTask(id) {
@@ -269,6 +259,5 @@ window.search = search;
 window.addToQueue = addToQueue;
 window.renderQueue = renderQueue;
 window.forceTask = forceTask;
-window.abortTask = abortTask;
 window.removeTask = removeTask;
 window.showToast = showToast;

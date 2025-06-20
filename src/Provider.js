@@ -10,6 +10,6 @@ export default class Provider {
     }
 
     get basePath() {
-        return path.join('.', 'downloads', this.id);
+        return path.join('downloads', this.id);
     }
 }

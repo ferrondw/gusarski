@@ -1,6 +1,7 @@
 import { fileURLToPath, pathToFileURL } from 'url';
 import { WebSocket, WebSocketServer } from 'ws';
 import bodyParser from 'body-parser';
+import { logger } from './logger.js';
 import { readdirSync } from 'fs';
 import express from 'express';
 import http from 'http';
@@ -20,7 +21,7 @@ app.use('/icons', express.static(path.join(__dirname, 'src', 'providers', 'icons
 app.use(express.json());
 //#endregion
 
-var downloadQueue = []; // { taskId, providerId, state, abortController, progressMessages, progressPercent, data }
+var downloadQueue = []; // { taskId, providerId, state, progressMessages, data }
 var currentDownloadCount = 0;
 var taskIdCounter = 1;
 
@@ -50,7 +51,6 @@ wss.on('connection', ws => {
         switch (data.action) {
             case 'add': addTask(data.providerID, data.data); break;
             case 'force': forceTask(data.id); break;
-            case 'abort': abortTask(data.id); break;
             case 'remove': downloadQueue = downloadQueue.filter(t => t.id !== data.id); break;
             default: break;
         }
@@ -82,23 +82,11 @@ function addTask(providerID, data) {
         id: taskIdCounter++,
         providerID,
         state: "pending",
-        abortController: new AbortController(),
-        progress: 0,
         progressMessages: [],
         data
     };
     downloadQueue.push(task);
     broadcastQueue();
-    moveQueue();
-    return task;
-}
-
-function abortTask(id) {
-    const task = downloadQueue.find(task => task.id == id);
-    if (!task || !task.abortController) return { error: "Task not found or task does not have an abortController" };
-
-    task.abortController.abort();
-
     moveQueue();
     return task;
 }
@@ -113,17 +101,19 @@ async function runDownload(task) {
     task.state = "downloading";
     currentDownloadCount++;
 
+    task.addMessage = (message) => {
+        task.progressMessages.push(message);
+        logger.logInfo(`${task.data.title} (Task ${task.id}): ${message}`);
+        broadcastQueue();
+    };
+
     providers[task.providerID].download(task)
         .then(() => {
             task.state = "completed";
         })
         .catch(e => {
-            if (task.abortController.signal.aborted) {
-                task.state = "aborted";
-            } else {
-                task.state = "failed";
-                task.error = e.message;
-            }
+            task.state = "failed";
+            task.error = e.message; // not used but maybe handy later
         })
         .finally(() => {
             currentDownloadCount--;
@@ -143,19 +133,19 @@ app.get('/search/:providerID/:query', async (req, res) => {
 
         if (!query || query.length == 0) {
             res.status(500);
-            console.log(`No query given, search could not be started.`);
+            logger.logError(`No query given, search could not be started.`);
         }
 
         if (!providerID || providerID >= providers.length || providerID < 0) {
             res.status(500);
-            console.log(`No provider ID given, search could not be started.`);
+            logger.logError(`No provider ID given, search could not be started.`);
         }
 
         var results = await providers[providerID].search(query);
 
         if (!results || results.length == 0) {
             res.status(500);
-            console.log(`No results`);
+            logger.logError(`No results`);
         }
 
         res.json(results);
@@ -175,7 +165,7 @@ app.get('/proxy', async (req, res) => {
         const response = await fetch(decodedUrl);
 
         if (!response.ok) {
-            throw new Error(`Fetch failed with status ${response.status}`);
+            res.status(500).send(`Fetch failed with status ${response.status}`);
         }
 
         const contentType = response.headers.get('content-type') || 'application/octet-stream';
@@ -185,7 +175,7 @@ app.get('/proxy', async (req, res) => {
         res.send(buffer);
     } catch (err) {
         res.status(500).send("Error fetching url");
-        console.error(`Proxy failed for: ${targetUrl}`, err);
+        logger.logError(`Proxy failed for: ${targetUrl}`, err);
     }
 });
 
@@ -195,5 +185,5 @@ app.get('/providers', async (req, res) => {
 //#endregion
 
 server.listen(PORT, () => {
-    console.log(`Server listening at http://localhost:${PORT}`);
+    logger.logInfo(`Server listening at http://localhost:${PORT}`);
 });
