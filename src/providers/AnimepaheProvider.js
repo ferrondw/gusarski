@@ -32,7 +32,7 @@ export default class AnimepaheProvider extends Provider {
 
             let results = content.data.map(item => ({
                 title: item.title, // first 4 are required {title, amount, year, poster} where poster is the direct link to an image
-                amount: item.episodes,
+                amount: item.type == 'Movie' ? 'Movie' : `${item.episodes} Episode${item.episodes == 1 ? '' : 's'}`,
                 year: item.year,
                 poster: item.poster,
 
