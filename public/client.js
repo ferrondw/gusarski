@@ -15,25 +15,25 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function search(overwriteQuery) {
-    const queryInput = document.getElementById('searchQuery');
+    let queryInput = document.getElementById('searchQuery');
 
-    const query = overwriteQuery || queryInput.value.trim();
+    let query = overwriteQuery || queryInput.value.trim();
     if (!query) return;
 
     // show the "Searching..." text, clear the search input, and clear any already existing search results
-    const resultsContainer = document.getElementById('results');
-    const emptyMessage = document.getElementById('emptyMessage');
+    let resultsContainer = document.getElementById('results');
+    let emptyMessage = document.getElementById('emptyMessage');
     resultsContainer.innerHTML = "";
     queryInput.value = "";
     emptyMessage.style.display = "flex";
     emptyMessage.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><style>.spinner_qM83{animation:spinner_8HQG 1.05s infinite}.spinner_oXPr{animation-delay:.1s}.spinner_ZTLf{animation-delay:.2s}@keyframes spinner_8HQG{0%,57.14%{animation-timing-function:cubic-bezier(0.33,.66,.66,1);transform:translate(0)}28.57%{animation-timing-function:cubic-bezier(0.33,0,.66,.33);transform:translateY(-6px)}100%{transform:translate(0)}}</style><circle class="spinner_qM83" cx="4" cy="12" r="3"/><circle class="spinner_qM83 spinner_oXPr" cx="12" cy="12" r="3"/><circle class="spinner_qM83 spinner_ZTLf" cx="20" cy="12" r="3"/></svg>';
 
     try {
-        const stashProviderID = currentProviderID; // prevents user switching provider mid-search
+        let stashProviderID = currentProviderID; // prevents user switching provider mid-search
 
         // try to fetch the really not that good api from the server
-        const res = await fetch(`/search/${stashProviderID}/${encodeURIComponent(query)}`);
-        const results = await res.json();
+        let res = await fetch(`/search/${stashProviderID}/${encodeURIComponent(query)}`);
+        let results = await res.json();
         if (!results || results.length === 0 || !Array.isArray(results)) {
             emptyMessage.innerText = "No results found";
             return;
@@ -43,13 +43,13 @@ async function search(overwriteQuery) {
         emptyMessage.style.display = "none";
         resultsContainer.innerHTML = "";
         results.forEach(result => {
-            const defaultPoster = `<svg class="defaultPoster" width="24" height="24" viewBox="0 0 24 24">
+            let defaultPoster = `<svg class="defaultPoster" width="24" height="24" viewBox="0 0 24 24">
             <path d="M20 6h-5.59l2.29-2.29-1.41-1.41L12 5.59 8.71 2.3 7.3 3.71 9.59 6H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2M4 19V8h16v11z"></path>
             </svg>`;
 
-            const posterHTML = result.poster ? `<img src="/proxy?url=${encodeURIComponent(result.poster)}">` : defaultPoster;
+            let posterHTML = result.poster ? `<img src="/proxy?url=${encodeURIComponent(result.poster)}">` : defaultPoster;
 
-            const card = document.createElement('div');
+            let card = document.createElement('div');
             card.className = "card";
             card.addEventListener('click', () => addToQueue(result, stashProviderID));
             card.innerHTML = `
@@ -82,13 +82,13 @@ function addToQueue(data, providerID) {
 }
 
 function renderQueue(queue) {
-    const queueList = document.getElementById('queueList');
+    let queueList = document.getElementById('queueList');
     queueList.innerHTML = "";
     queue.forEach(task => {
-        const div = document.createElement('div');
+        let div = document.createElement('div');
         div.className = "queueItem";
-        const lastMessage = task.progressMessages.length ? task.progressMessages[task.progressMessages.length - 1] : "Nothing here yet (；′⌒`)";
-        var button;
+        let lastMessage = task.progressMessages.length ? task.progressMessages[task.progressMessages.length - 1] : "Nothing here yet (；′⌒`)";
+        let button;
         if (task.state === 'pending') {
             button = `<button onclick="forceTask(${task.id})">Force</button>`;
         } else if (task.state === 'downloading') {
@@ -117,8 +117,8 @@ function removeTask(id) {
 }
 
 function showToast(message) {
-    const toastContainer = document.getElementById('toastContainer');
-    const toast = document.createElement('div');
+    let toastContainer = document.getElementById('toastContainer');
+    let toast = document.createElement('div');
     toast.className = "toast";
     toast.innerText = message;
     toastContainer.appendChild(toast);
@@ -127,8 +127,8 @@ function showToast(message) {
 
 //#region WebSocket
 function setupWebSocket() {
-    const icon = document.getElementById('wsIcon');
-    const protocol = location.protocol === 'https:' ? 'wss://' : 'ws://';
+    let icon = document.getElementById('wsIcon');
+    let protocol = location.protocol === 'https:' ? 'wss://' : 'ws://';
     socket = new WebSocket(protocol + location.host);
 
     socket.addEventListener('open', () => {
@@ -172,8 +172,8 @@ function attemptReconnect() {
 
 //#region Sidebar
 function toggleSidebar() {
-    const sidebar = document.getElementById('queueSidebar');
-    const toggleBtn = document.querySelector('.sidebarToggle');
+    let sidebar = document.getElementById('queueSidebar');
+    let toggleBtn = document.querySelector('.sidebarToggle');
 
     sidebar.classList.toggle('open');
     toggleBtn.querySelector('svg').style.transform = sidebar.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
@@ -190,16 +190,15 @@ document.addEventListener('touchstart', (event) => {
 
 document.addEventListener('touchend', (event) => {
     touchEndX = event.changedTouches[0].clientX;
-    const deltaX = touchEndX - touchStartX;
-    const deltaY = event.changedTouches[0].clientY - touchStartY;
-    const sidebar = document.getElementById('queueSidebar');
-    const toggleBtn = document.querySelector('.sidebarToggle');
+    let deltaX = touchEndX - touchStartX;
+    let deltaY = event.changedTouches[0].clientY - touchStartY;
+    let sidebar = document.getElementById('queueSidebar');
+    let toggleBtn = document.querySelector('.sidebarToggle');
 
     if (deltaX > 50 && Math.abs(deltaY) < 50) {
         sidebar.classList.remove('open');
         toggleBtn.querySelector('svg').style.transform = 'rotate(0deg)';
     } else if (deltaX < -50 && Math.abs(deltaY) < 50) {
-
         sidebar.classList.add('open');
         toggleBtn.querySelector('svg').style.transform = 'rotate(180deg)';
     }
@@ -210,32 +209,32 @@ document.addEventListener('keydown', (event) => {
 
     if (event.key === '/') {
         event.preventDefault();
-        const sidebar = document.getElementById('queueSidebar');
-        const toggleBtn = document.querySelector('.sidebarToggle');
-        const svgIcon = toggleBtn.querySelector('svg');
+        let sidebar = document.getElementById('queueSidebar');
+        let toggleBtn = document.querySelector('.sidebarToggle');
+        let svgIcon = toggleBtn.querySelector('svg');
 
         sidebar.classList.toggle('open');
-        const isOpen = sidebar.classList.contains('open');
+        let isOpen = sidebar.classList.contains('open');
         svgIcon.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
     }
 
     if (event.key === '.') {
         event.preventDefault();
-        const providerPicker = document.getElementById('providerPicker');
+        let providerPicker = document.getElementById('providerPicker');
         providerPicker.classList.toggle('open');
     }
 });
 //#endregion
 
 async function getProviders() {
-    const providerResponse = await fetch('/providers');
-    const providers = await providerResponse.json();
-    const providerPicker = document.getElementById('providerPicker');
+    let providerResponse = await fetch('/providers');
+    let providers = await providerResponse.json();
+    let providerPicker = document.getElementById('providerPicker');
 
     for (let index = 0; index < providers.length; index++) {
-        const provider = providers[index];
+        let provider = providers[index];
 
-        const button = document.createElement('div');
+        let button = document.createElement('div');
         button.classList.add('provider');
         button.innerHTML = `<img src="/icons/${provider.icon}"><p>${provider.name}</p>`;
         button.addEventListener('click', () => { pickProvider(index) });
