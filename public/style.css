@@ -154,6 +154,7 @@ main {
             backdrop-filter: var(--blur);
             transition: var(--transition);
             outline: none;
+            font-family: var(--font);
             z-index: 2;
         }
 
@@ -516,12 +517,14 @@ main {
             .queueButtons {
                 text-align: right;
                 min-width: 100%;
+                padding-top: 10px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
 
                 button {
                     background: var(--element-background);
+                    font-family: var(--font);
                     border: var(--element-border);
                     color: var(--text);
                     padding: 12px 24px;

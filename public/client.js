@@ -219,9 +219,13 @@ document.addEventListener('keydown', (event) => {
     }
 
     if (event.key === '.') {
-        event.preventDefault();
-        let providerPicker = document.getElementById('providerPicker');
-        providerPicker.classList.toggle('open');
+        pickProvider((currentProviderID + 1) % providers.length);
+        showToast(`Quick switched to ${providers[currentProviderID].name}`);
+    }
+    
+    if (event.key === ',') {
+        pickProvider((currentProviderID - 1 + providers.length) % providers.length);
+        showToast(`Quick switched to ${providers[currentProviderID].name}`);
     }
 });
 //#endregion
