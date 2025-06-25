@@ -1,0 +1,59 @@
+:root {
+    --background: #0b090f;
+    --background-design:
+        radial-gradient(circle at 10% 80%, #3c00ff10 0%, transparent 50%),
+        radial-gradient(circle at 80% 10%, #0059ff10 0%, transparent 50%);
+    --font: 'Inter', sans-serif;
+    --text: #fff;
+    --text-semi: #94a3b8;
+
+    --card-title-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    --card-overlay: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 60%, transparent 100%);
+    --card-amount-text: rgb(14, 165, 233);
+    --card-amount-background: rgba(14, 165, 233, 0.2);
+    --card-amount-border: 1px solid rgba(14, 165, 233, 0.3);
+    --card-animation: scaleIn 0.3s ease;
+
+    --border-radius-inner: 16px;
+    --border-radius-outer: calc(var(--border-radius-inner) * 1.5);
+    --border-radius-rounded: 1000px;
+    --blur: blur(20px);
+
+    --element-border: 1px solid rgba(148, 163, 184, 0.1);
+    --element-border-hover: rgb(14, 165, 233);
+    --element-background: rgba(30, 41, 59, 0.6);
+    --element-background-hover: rgba(120, 149, 189, 0.2);
+    --sidebar-background: rgba(15, 23, 42, 0.9);
+    --sidebar-shadow: -10px 0 20px rgba(0, 0, 0, 0.3);
+
+    --scrollbar-thumb: #151e31;
+    --transition: all 0.3s ease;
+
+    --toast-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    --toast-animation: slideIn 2s ease;
+
+    --ws-connected: #0000;
+    --ws-disconnected: #c41b1b;
+    --ws-disconnected-animation: pulse 2s infinite ease-in-out;
+}
+
+:root.amoled {
+    --background: #000;
+    --background-design: #000;
+    --text: #fff;
+    --text-semi: #909090;
+
+    --card-title-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    --card-overlay: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 60%, transparent 100%);
+    --card-amount-text: #cfcfcf;
+    --card-amount-background: rgba(149, 149, 149, 0.2);
+    --card-amount-border: 1px solid rgba(196, 196, 196, 0.3);
+
+    --element-border: 1px solid rgba(156, 156, 156, 0.1);
+    --element-border-hover: #cfcfcf;
+    --element-background: rgba(37, 37, 37, 0.6);
+    --element-background-hover: rgba(163, 163, 163, 0.2);
+    --sidebar-background: rgba(22, 22, 22, 0.9);
+
+    --scrollbar-thumb: #161616;
+}

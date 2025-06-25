@@ -1,6 +1,5 @@
 import { logger } from '../../logger.js';
 import Provider from '../Provider.js';
-import fetch from 'node-fetch';
 import JSZip from 'jszip';
 import { mkdirp } from 'mkdirp';
 import path from 'path';
