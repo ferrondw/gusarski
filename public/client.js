@@ -1,3 +1,6 @@
+const themes = ['dark', 'amoled', 'dingendingen'];
+var currentThemeIndex = 0;
+
 var socketReconnectInterval = null;
 var socket;
 
@@ -8,6 +11,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupWebSocket();
     providers = await getProviders();
     pickProvider(0);
+
+    currentThemeIndex = localStorage.getItem('themeIndex') || 0;
+    refreshTheme();
 
     document.getElementById('providerButton').addEventListener('click', () => {
         document.getElementById('providerPicker').classList.toggle('open');
@@ -222,10 +228,14 @@ document.addEventListener('keydown', (event) => {
         pickProvider((currentProviderID + 1) % providers.length);
         showToast(`Quick switched to ${providers[currentProviderID].name}`);
     }
-    
+
     if (event.key === ',') {
         pickProvider((currentProviderID - 1 + providers.length) % providers.length);
         showToast(`Quick switched to ${providers[currentProviderID].name}`);
+    }
+
+    if (event.key === '0') {
+        cycleThemes();
     }
 });
 //#endregion
@@ -252,7 +262,18 @@ async function getProviders() {
 async function pickProvider(id) {
     document.getElementById('currentProviderIcon').src = `/icons/${providers[id].icon}`;
     document.getElementById('providerPicker').classList.remove('open');
+    document.getElementById('searchQuery').placeholder = providers[id].searchPlaceholder || 'Search...'
     currentProviderID = id;
+}
+
+function cycleThemes() {
+    currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+    refreshTheme();
+}
+
+function refreshTheme() {
+    document.documentElement.className = themes[currentThemeIndex];
+    localStorage.setItem('themeIndex', currentThemeIndex);
 }
 
 // clean? no. does it work? yes.

@@ -10,6 +10,7 @@ export default class AnimepaheProvider extends Provider {
         this.name = 'Animepahe'; // name, id, and icon are required, icon is the name of the image file in ./icons/
         this.id = 'animepahe';
         this.icon = 'animepahe.png';
+        this.searchPlaceholder = 'Search anime...';
 
         this.baseURL = 'https://animepahe.ru/';
         this.hideBrowser = false; // hides the headful browser while downloading
@@ -181,6 +182,9 @@ export default class AnimepaheProvider extends Provider {
     async processEpisode(page, seasonDir, episodeNumber, addMessage) {
         // wait for the downloads options to appear
         await page.waitForSelector('#pickDownload', { state: 'attached', timeout: this.selectorTimeout });
+        page.setDefaultTimeout(0); // resets timeouts
+        page.setDefaultNavigationTimeout(0);
+
         let options = await page.$$('#pickDownload .dropdown-item');
 
         // try to get the first download link good enough to be in the range of the desired resolution +- the resolution lenience

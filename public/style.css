@@ -3,21 +3,27 @@
     padding: 0;
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
-
+    
     ::-webkit-scrollbar {
         width: 7px;
         height: 7px;
         background-color: #0000;
     }
-
+    
     ::-webkit-scrollbar-thumb {
         background-color: var(--scrollbar-thumb);
         border-radius: var(--border-radius-rounded);
     }
 }
 
+input, button, textarea, select {
+  font: inherit;
+  text-transform: inherit;
+}
+
 body {
     font-family: var(--font);
+    text-transform: var(--text-transform);
     background: var(--background);
     color: var(--text);
     line-height: 1.6;
@@ -115,7 +121,6 @@ main {
             backdrop-filter: var(--blur);
             transition: var(--transition);
             outline: none;
-            font-family: var(--font);
             z-index: 2;
         }
 
@@ -485,7 +490,6 @@ main {
 
                 button {
                     background: var(--element-background);
-                    font-family: var(--font);
                     border: var(--element-border);
                     color: var(--text);
                     padding: 12px 24px;

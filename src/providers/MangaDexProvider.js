@@ -11,6 +11,7 @@ export default class MangaDexProvider extends Provider {
         this.name = 'MangaDex';
         this.id = 'mangadex';
         this.icon = 'mangadex.png';
+        this.searchPlaceholder = 'Search manga...';
 
         this.apiBase = 'https://api.mangadex.org';
         this.coverBase = 'https://uploads.mangadex.org/covers';
@@ -72,8 +73,7 @@ export default class MangaDexProvider extends Provider {
         let chapters = await this.fetchChapters(session);
         task.addMessage(`Found ${chapters.length} chapters.`);
 
-        for (let [index, chap] of chapters.entries()) {
-            let chapNum = chap.attributes.chapter || 'ONESHOT';
+        for (let [chap] of chapters.entries()) { // let [index, chap]
             await this.downloadChapter(chap, rootDir, safeTitle, year, task);
         }
 
