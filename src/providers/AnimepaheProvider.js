@@ -245,17 +245,19 @@ export default class AnimepaheProvider extends Provider {
     }
 
     async openPopup(page, option, resolution, addMessage) {
-        let popup = null;
-
         for (let attempt = 0; attempt < this.maxPopupRetries; attempt++) {
             try {
                 await option.evaluate(el => el.click());
-                popup = await page.waitForEvent('popup', { timeout: this.selectorTimeout });
+                let popup = await page.waitForEvent('popup', { timeout: this.selectorTimeout });
                 if (popup) return popup;
             } catch (e) {
-                addMessage(`Retrying ${resolution}p option (attempt ${attempt + 1})…`);
+                logger.logWarning(`openPopup: attempt ${attempt + 1} failed: ${e.message}`);
+                addMessage(`Retrying ${resolution}p option (attempt ${attempt + 1})...`);
+                await page.waitForTimeout(1000); // "net::ERR_ABORTED; maybe frame was detached?", hope this will fix it, it not just remove this line
             }
         }
+        logger.logError(`Failed to open popup in ${resolution}p after ${this.maxPopupRetries} attempts.`);
+        return null;
     }
 
     async getPreferredDownloadOption(options) {
@@ -287,13 +289,22 @@ export default class AnimepaheProvider extends Provider {
             try {
                 let download = await this.kwikDownload(popup);
                 return download;
-            } catch {
+            } catch (e) {
                 if (attempt < this.maxDownloadRetries) {
-                    logger.logWarning(`Download didn’t start, retrying... (attempt ${attempt})…`);
-                    addMessage(`Download didn’t start, retrying... (attempt ${attempt})…`);
-                    await popup.reload();
+                    logger.logWarning(`Download didn’t start (attempt ${attempt}): ${e.message}`);
+                    addMessage(`Download didn’t start, retrying... (attempt ${attempt})`);
+                    try { // if it errors just wait a bit, this whole code block is in a for loop anyways
+                        await popup.reload({ waitUntil: 'networkidle' });
+                    } catch (reloadErr) {
+                        logger.logWarning(`popup.reload() failed: ${reloadErr.message}`);
+                        await popup.waitForTimeout(1000); // same here, download takes a while anyways so waiting a second doesn't hurt anyone... i think
+                    }
+                } else {
+                    logger.logError(`All download attempts failed.`);
+                    addMessage(`All download attempts failed, skipping episode...`);
                 }
             }
         }
+        return null;
     }
 }
