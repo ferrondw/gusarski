@@ -98,8 +98,11 @@ function renderQueue(queue) {
         if (task.state === 'pending') {
             button = `<button onclick="forceTask(${task.id})">Force</button>`;
         } else if (task.state === 'downloading') {
-            button = ``; // removed aborting tasks due to lack of skill (idk how to properly implement it)
-        } else {
+            button = ``;
+        }
+        else if (task.state == 'failed') {
+            button = `<button onclick="retryTask(${task.id})">Retry</button><button onclick="removeTask(${task.id})">Remove</button>`;
+        } else { // probably completed
             button = `<button onclick="removeTask(${task.id})">Remove</button>`;
         }
 
@@ -120,6 +123,10 @@ function forceTask(id) {
 
 function removeTask(id) {
     socket.send(JSON.stringify({ action: 'remove', id }));
+}
+
+function retryTask(id) {
+    socket.send(JSON.stringify({ action: 'retry', id }));
 }
 
 function showToast(message) {
@@ -283,5 +290,6 @@ window.search = search;
 window.addToQueue = addToQueue;
 window.renderQueue = renderQueue;
 window.forceTask = forceTask;
+window.retryTask = retryTask;
 window.removeTask = removeTask;
 window.showToast = showToast;

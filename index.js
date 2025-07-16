@@ -51,6 +51,7 @@ wss.on('connection', ws => {
         switch (data.action) {
             case 'add': addTask(data.providerID, data.data); break;
             case 'force': forceTask(data.id); break;
+            case 'retry': retryTask(data.id); break;
             case 'remove': downloadQueue = downloadQueue.filter(t => t.id !== data.id); break;
             default: break;
         }
@@ -86,6 +87,15 @@ function addTask(providerID, data) {
         data
     };
     downloadQueue.push(task);
+    broadcastQueue();
+    moveQueue();
+    return task;
+}
+
+function retryTask(id) {
+    const task = downloadQueue.find(task => task.id == id);
+    if (task.state !== 'failed') return;
+    task.state = 'pending';
     broadcastQueue();
     moveQueue();
     return task;
