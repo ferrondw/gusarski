@@ -3,81 +3,115 @@ import { chromium } from 'playwright';
 import fs from 'fs';
 import path from 'path';
 import unzipper from 'unzipper';
+import { logger } from '../logger.js';
 
-const ALLOWED_REGIONS = ['World', 'Japan', 'Europe', 'USA', 'Australia', 'Taiwan', 'China', 'Korea', 'France', 'Germany', 'Canada', 'Italy', 'Spain', 'Netherlands'];
+const ALLOWED_REGIONS = ['World', 'Asia', 'Japan', 'Europe', 'USA', 'Australia', 'Taiwan', 'China', 'Korea', 'France', 'Germany', 'Canada', 'Italy', 'Spain', 'Netherlands'];
 const ALLOWED_FLAGS = ['Demo', 'Beta', 'Kiosk', 'Virtual Console', 'DLC', 'Update', 'Channel'];
 
 export default class MyrientProvider extends Provider {
     constructor() {
         super();
-        this.hideBrowser = false;
+        this.hideBrowser = true;
         this.headlessBrowser = false;
         this.selectorTimeout = 10000;
     }
 
     async search(query) {
-        let browser = await this.newBrowser();
-        let page = await browser.newPage();
-        await page.goto(this.baseURL, { waitUntil: 'networkidle' });
+        let browser = null;
+        try {
+            browser = await this.newBrowser();
+            let page = await browser.newPage();
+            await page.goto(this.baseURL, { waitUntil: 'networkidle' });
 
-        await page.focus('#search');
-        await page.keyboard.type(query);
+            await page.focus('#search');
+            await page.keyboard.type(query);
 
-        let rows = await page.$$('#list tbody tr:not([hidden])');
-        let results = [];
+            let rows = await page.$$('#list tbody tr:not([hidden])');
+            let results = [];
 
-        for (let row of rows) {
-            let linkEl = await row.$('td.link a');
-            if (!linkEl) continue;
-            let rawTitle = (await linkEl.getAttribute('title')) || (await linkEl.textContent());
-            let href = await linkEl.getAttribute('href');
-            let sizeEl = await row.$('td.size');
-            let amount = sizeEl ? (await sizeEl.textContent()).trim() : null;
+            for (let row of rows) {
+                let linkEl = await row.$('td.link a');
+                if (!linkEl) continue;
+                let rawTitle = (await linkEl.getAttribute('title')) || (await linkEl.textContent());
+                let href = await linkEl.getAttribute('href');
+                let sizeEl = await row.$('td.size');
+                let amount = sizeEl ? (await sizeEl.textContent()).trim() : null;
 
-            let parenMatches = [...rawTitle.matchAll(/\(([^)]+)\)/g)].map(m => m[1]);
+                let parenMatches = [...rawTitle.matchAll(/\(([^)]+)\)/g)].map(m => m[1]);
 
-            let region = null;
-            let flags = [];
-            for (let content of parenMatches) {
-                if (ALLOWED_REGIONS.includes(content)) {
-                    region = content;
-                } else if (ALLOWED_FLAGS.includes(content)) {
-                    flags.push(content);
+                let region = null;
+                let flags = [];
+                for (let content of parenMatches) {
+                    if (ALLOWED_REGIONS.includes(content)) {
+                        region = content;
+                    } else if (ALLOWED_FLAGS.includes(content)) {
+                        flags.push(content);
+                    }
                 }
+
+                let year = region || null;
+                let flagsText = flags.length ? ` (${flags.join(', ')})` : '';
+                let title = `${rawTitle.replace(/\s*\([^()]*\)/g, '').replace(/\.zip$/i, '').trim()}${flagsText}`;
+                results.push({ title, amount, year, href });
             }
 
-            let year = region || null;
-            let flagsText = flags.length ? ` (${flags.join(', ')})` : '';
-            let title = `${rawTitle.replace(/\s*\([^()]*\)/g, '').replace(/\.zip$/i, '').trim()}${flagsText}`;
-            results.push({ title, amount, year, href });
+            return results;
+        } catch (e) {
+            return [];
+        } finally {
+            try {
+                if (browser) {
+                    await browser.close();
+                }
+            } catch (e) {
+                logger.logWarning("Error while closing the browser: " + e.message);
+            }
         }
-
-        await browser.close();
-        return results;
     }
 
     async download(task) {
-        let browser = await this.newBrowser();
-        let context = await browser.newContext({ acceptDownloads: true });
-        let page = await context.newPage();
-        await page.goto(this.baseURL, { waitUntil: 'networkidle' });
+        let browser = null;
+        try {
+            browser = await this.newBrowser();
+            let page = await browser.newPage();
+            await page.goto(this.baseURL, { waitUntil: 'networkidle' });
 
-        let [download] = await Promise.all([
-            page.waitForEvent('download'),
-            page.click(`a[href='${task.data.href}']`)
-        ]);
+            task.addMessage('Downloading ZIP...')
+            let [download] = await Promise.all([
+                page.waitForEvent('download'),
+                page.click(`a[href='${task.data.href}']`)
+            ]);
 
-        let cleanTitle = task.data.title.replace(/[<>:"\/\|?*]/g, '');
-        let destDir = path.join(this.basePath, cleanTitle);
-        await fs.promises.mkdir(destDir, { recursive: true });
-        let zipPath = path.join(destDir, `${cleanTitle}.zip`);
+            task.addMessage('Extracting ZIP...')
+            let cleanTitle = task.data.title.replace(/[<>:"\/\|?*]/g, ''); // MISSING REGION IDENTIFIER, OVERWRITES OTHER REGIONAL GAMES
+            let destDir = path.join(this.basePath, cleanTitle);
+            await fs.promises.mkdir(destDir, { recursive: true });
+            let zipPath = path.join(destDir, `${cleanTitle}.zip`);
 
-        await download.saveAs(zipPath);
-        await fs.createReadStream(zipPath)
-            .pipe(unzipper.Extract({ path: destDir }))
-            .promise();
+            await download.saveAs(zipPath);
+            await fs.createReadStream(zipPath)
+                .pipe(unzipper.Extract({ path: destDir }))
+                .promise();
 
-        await browser.close();
+            task.addMessage('Cleaning up ZIP file...');
+            try {
+                await fs.promises.unlink(zipPath);
+                task.addMessage('ZIP file deleted.');
+            } catch (err) {
+                task.addMessage(`Failed to delete ZIP`);
+            }
+        } catch (e) {
+            logger.logError(`Error downloading ${task.data.title}`, e);
+            throw new Error('Error downloading');
+        } finally {
+            try {
+                if (browser) {
+                    await browser.close();
+                }
+            } catch (e) {
+                logger.logWarning("Error while closing the browser: " + e.message);
+            }
+        }
     }
 
     async newBrowser() {
