@@ -12,7 +12,7 @@
     <body>
         <header>
             <img class="logo" src="favicon.png" alt="Logo">
-            <button class="sidebarToggle" onclick="toggleSidebar()">
+            <button class="sidebarToggle" onclick="toggleSidebar()" title="Toggle Sidebar (/)">
                 <svg width="24px" height="24px" viewBox="0 -960 960 960">
                     <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/>
                 </svg>
@@ -23,6 +23,41 @@
                 <h2>Downloads</h2>
             </div>
             <div id="queueList"></div>
+            <div id="settings">
+                <button id="cycleThemeButton" title="Cycle Theme (m)">
+                    <svg viewBox="0 0 24 24">
+                        <rect width="24" height="24" opacity="0"/>
+                        <path d="M19.54 5.08A10.61 10.61 0 0 0 11.91 2a10 10 0 0 0-.05 20 2.58 2.58 0 0 0 2.53-1.89 2.52 2.52 0 0 0-.57-2.28.5.5 0 0 1 .37-.83h1.65A6.15 6.15 0 0 0 22 11.33a8.48 8.48 0 0 0-2.46-6.25zM15.88 15h-1.65a2.49 2.49 0 0 0-1.87 4.15.49.49 0 0 1 .12.49c-.05.21-.28.34-.59.36a8 8 0 0 1-7.82-9.11A8.1 8.1 0 0 1 11.92 4H12a8.47 8.47 0 0 1 6.1 2.48 6.5 6.5 0 0 1 1.9 4.77A4.17 4.17 0 0 1 15.88 15z"/>
+                        <circle cx="12" cy="6.5" r="1.5"/>
+                        <path d="M15.25 7.2a1.5 1.5 0 1 0 2.05.55 1.5 1.5 0 0 0-2.05-.55z"/>
+                        <path d="M8.75 7.2a1.5 1.5 0 1 0 .55 2.05 1.5 1.5 0 0 0-.55-2.05z"/>
+                        <path d="M6.16 11.26a1.5 1.5 0 1 0 2.08.4 1.49 1.49 0 0 0-2.08-.4z"/>
+                    </svg>
+                </button>
+                <button id="creditsButton" disabled title="Credits (none)">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M11 15H13V17H11z"></path>
+                        <path d="m9.53,8.03c-.66.66-1.03,1.54-1.03,2.47h2c0-.4.16-.78.44-1.06.57-.57,1.55-.57,2.12,0,.28.28.44.66.44,1.06s-.16.78-.44,1.06-.66.44-1.06.44c-.55,0-1,.45-1,1v1h2v-.14c.55-.16,1.06-.46,1.47-.88.66-.66,1.03-1.54,1.03-2.47s-.36-1.81-1.03-2.47c-1.32-1.32-3.63-1.32-4.95,0Z"></path>
+                        <path d="m12,2C6.49,2,2,6.49,2,12c0,2.12.68,4.19,1.93,5.9l-1.75,2.53c-.21.31-.24.7-.06,1.03.17.33.51.54.89.54h9c5.51,0,10-4.49,10-10S17.51,2,12,2Zm0,18h-7.09l1.09-1.57c.26-.37.23-.88-.06-1.22-1.25-1.45-1.93-3.3-1.93-5.21,0-4.41,3.59-8,8-8s8,3.59,8,8-3.59,8-8,8Z"></path>
+                    </svg>
+                </button>
+                <button id="shortcutsButton" disabled title="Shortcuts (none)">
+                    <svg viewBox="0 0 24 24">
+                        <path d="m21,4H3c-1.1,0-2,.9-2,2v12c0,1.1.9,2,2,2h18c1.1,0,2-.9,2-2V6c0-1.1-.9-2-2-2ZM3,18V6h18v12s-18,0-18,0Z"></path>
+                        <path d="M5 8H7V10H5z"></path>
+                        <path d="M8 8H10V10H8z"></path>
+                        <path d="M11 8H13V10H11z"></path>
+                        <path d="M14 8H16V10H14z"></path>
+                        <path d="M17 8H19V10H17z"></path>
+                        <path d="M5 11H7V13H5z"></path>
+                        <path d="M8 11H10V13H8z"></path>
+                        <path d="M8 14H16V16H8z"></path>
+                        <path d="M11 11H13V13H11z"></path>
+                        <path d="M14 11H16V13H14z"></path>
+                        <path d="M17 11H19V13H17z"></path>
+                    </svg>
+                </button>
+            </div>
         </div>
         <main>
             <div class="searchArea">
@@ -40,12 +75,11 @@
                     placeholder="Search..."
                     onkeyup="if(event.key==='Enter') search()"
                 >
-                <button id="providerButton" title="Choose Provider">
+                <button id="providerButton" title="Choose Provider (, and . to quick switch)">
                     <img id="currentProviderIcon">
                 </button>
             </div>
-            <div id="providerPicker">
-            </div>
+            <div id="providerPicker"></div>
             <div id="searchResults">
                 <div id="results" class="cardContainer"></div>
                 <div id="emptyMessage" class="centerMessage">Nothing here yet (；′⌒`)</div>

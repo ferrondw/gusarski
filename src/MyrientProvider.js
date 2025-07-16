@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import unzipper from 'unzipper';
 
-const ALLOWED_REGIONS = ['World', 'Japan', 'Europe', 'USA', 'Taiwan', 'China', 'Korea', 'France', 'Germany', 'Canada', 'Italy', 'Spain', 'Netherlands'];
+const ALLOWED_REGIONS = ['World', 'Japan', 'Europe', 'USA', 'Australia', 'Taiwan', 'China', 'Korea', 'France', 'Germany', 'Canada', 'Italy', 'Spain', 'Netherlands'];
 const ALLOWED_FLAGS = ['Demo', 'Beta', 'Kiosk', 'Virtual Console', 'DLC', 'Update', 'Channel'];
 
 export default class MyrientProvider extends Provider {

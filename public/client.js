@@ -1,5 +1,5 @@
-const themes = ['dark', 'amoled', 'dingendingen'];
-var currentThemeIndex = 0;
+const themes = ['dark', 'amoled', 'dingendingen', 'grounded', 'water', 'fire', 'light'];
+var currentThemeIndex = parseInt(localStorage.getItem('themeIndex'), 10) || 0;
 
 var socketReconnectInterval = null;
 var socket;
@@ -11,12 +11,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupWebSocket();
     providers = await getProviders();
     pickProvider(0);
-
-    currentThemeIndex = localStorage.getItem('themeIndex') || 0;
     refreshTheme();
 
     document.getElementById('providerButton').addEventListener('click', () => {
         document.getElementById('providerPicker').classList.toggle('open');
+    });
+
+    document.getElementById('cycleThemeButton').addEventListener('click', () => {
+        cycleThemes();
     });
 });
 
@@ -217,7 +219,7 @@ document.addEventListener('touchend', (event) => {
     }
 });
 
-document.addEventListener('keydown', (event) => {
+document.addEventListener('keydown', (event) => { // shortcuts
     if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
 
     if (event.key === '/') {
@@ -241,7 +243,7 @@ document.addEventListener('keydown', (event) => {
         showToast(`Quick switched to ${providers[currentProviderID].name}`);
     }
 
-    if (event.key === '0') {
+    if (event.key === 'm') {
         cycleThemes();
     }
 });

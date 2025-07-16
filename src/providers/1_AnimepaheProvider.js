@@ -4,7 +4,7 @@ import { chromium } from 'playwright';
 import { mkdirp } from 'mkdirp';
 import path from 'path';
 
-export default class AnimepaheProvider extends Provider {
+export default class AnimepaheProvider extends Provider { // filename starts with 1_ to get priority over other providers
     constructor() {
         super();
         this.name = 'Animepahe'; // name, id, and icon are required, icon is the name of the image file in ./icons/
