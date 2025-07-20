@@ -26,15 +26,15 @@ var currentDownloadCount = 0;
 var taskIdCounter = 1;
 
 const providers = await (async () => {
-    const providersDir = path.join(__dirname, 'src', 'providers');
-    const filePaths = readdirSync(providersDir).filter(f => f.endsWith('.js'));
+    let providersDir = path.join(__dirname, 'src', 'providers');
+    let filePaths = readdirSync(providersDir).filter(f => f.endsWith('.js'));
 
-    const modules = await Promise.all(
+    let modules = await Promise.all(
         filePaths.map(filePath => import(pathToFileURL(path.join(providersDir, filePath)).href))
     );
 
     return modules.map(m => {
-        const Provider = m.default;
+        let Provider = m.default;
         return new Provider();
     });
 })();
@@ -63,14 +63,14 @@ wss.on('connection', ws => {
 //#region Queue Management
 function moveQueue() {
     while (currentDownloadCount < QUEUE_BATCH_LIMIT) {
-        const nextTask = downloadQueue.find(task => task.state === 'pending');
+        let nextTask = downloadQueue.find(task => task.state === 'pending');
         if (!nextTask) break;
         runDownload(nextTask);
     }
 }
 
 function broadcastQueue() {
-    const payload = JSON.stringify({ type: 'queue', queue: downloadQueue });
+    let payload = JSON.stringify({ type: 'queue', queue: downloadQueue });
     wss.clients.forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
             client.send(payload);
@@ -79,7 +79,7 @@ function broadcastQueue() {
 }
 
 function addTask(providerID, data) {
-    const task = {
+    let task = {
         id: taskIdCounter++,
         providerID,
         state: "pending",
@@ -93,7 +93,7 @@ function addTask(providerID, data) {
 }
 
 function retryTask(id) {
-    const task = downloadQueue.find(task => task.id == id);
+    let task = downloadQueue.find(task => task.id == id);
     if (task.state !== 'failed') return;
     task.state = 'pending';
     broadcastQueue();
@@ -102,7 +102,7 @@ function retryTask(id) {
 }
 
 function forceTask(id) {
-    const task = downloadQueue.find(task => task.id == id);
+    let task = downloadQueue.find(task => task.id == id);
     runDownload(task);
     return task;
 }
@@ -138,8 +138,8 @@ async function runDownload(task) {
 //#region Endpoints
 app.get('/search/:providerID/:query', async (req, res) => {
     try {
-        const query = req.params.query;
-        const providerID = req.params.providerID;
+        let query = req.params.query;
+        let providerID = req.params.providerID;
 
         if (!query || query.length == 0) {
             res.status(500);
@@ -163,23 +163,22 @@ app.get('/search/:providerID/:query', async (req, res) => {
     catch {
         res.status(500);
     }
-
 });
 
 app.get('/proxy', async (req, res) => {
     try {
-        const targetUrl = req.query.url;
+        let targetUrl = req.query.url;
         if (!targetUrl || targetUrl == null) return res.status(400).send("No URL specified");
 
-        const decodedUrl = decodeURIComponent(targetUrl);
-        const response = await fetch(decodedUrl);
+        let decodedUrl = decodeURIComponent(targetUrl);
+        let response = await fetch(decodedUrl);
 
         if (!response.ok) {
             res.status(500).send(`Fetch failed with status ${response.status}`);
         }
 
-        const contentType = response.headers.get('content-type') || 'application/octet-stream';
-        const buffer = Buffer.from(await response.arrayBuffer());
+        let contentType = response.headers.get('content-type') || 'application/octet-stream';
+        let buffer = Buffer.from(await response.arrayBuffer());
 
         res.set('Content-Type', contentType);
         res.send(buffer);

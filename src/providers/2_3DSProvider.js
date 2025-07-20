@@ -3,7 +3,7 @@ import MyrientProvider from '../MyrientProvider.js';
 export default class _3DSProvider extends MyrientProvider { // need the underscore because JS is scared of classes starting with a number
     constructor() {
         super();
-        this.name = '3DS';
+        this.name = '3DS (Myrient)';
         this.id = '3ds';
         this.icon = '3ds.png';
         this.searchPlaceholder = 'Search 3DS games...';

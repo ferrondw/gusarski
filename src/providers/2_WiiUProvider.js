@@ -3,7 +3,7 @@ import MyrientProvider from '../MyrientProvider.js';
 export default class WiiUProvider extends MyrientProvider {
     constructor() {
         super();
-        this.name = 'WiiU';
+        this.name = 'WiiU (Myrient)';
         this.id = 'wiiu';
         this.icon = 'wiiu.png';
         this.searchPlaceholder = 'Search WiiU games...';

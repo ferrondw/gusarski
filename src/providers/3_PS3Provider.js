@@ -3,7 +3,7 @@ import MyrientProvider from '../MyrientProvider.js';
 export default class PS1Provider extends MyrientProvider {
     constructor() {
         super();
-        this.name = 'PS3';
+        this.name = 'PS3 (Myrient)';
         this.id = 'ps3';
         this.icon = 'playstation.png';
         this.searchPlaceholder = 'Search PS3 games...';

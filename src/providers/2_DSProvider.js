@@ -3,7 +3,7 @@ import MyrientProvider from '../MyrientProvider.js';
 export default class DSProvider extends MyrientProvider {
     constructor() {
         super();
-        this.name = 'DS';
+        this.name = 'DS (Myrient)';
         this.id = 'ds';
         this.icon = 'ds.png';
         this.searchPlaceholder = 'Search DS games...';

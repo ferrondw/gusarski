@@ -8,7 +8,7 @@ import fs from 'fs';
 export default class MangaDexProvider extends Provider {
     constructor() {
         super();
-        this.name = 'MangaDex';
+        this.name = 'Manga (MangaDex)';
         this.id = 'mangadex';
         this.icon = 'mangadex.png';
         this.searchPlaceholder = 'Search manga...';

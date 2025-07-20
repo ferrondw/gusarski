@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import unzipper from 'unzipper';
 import { logger } from '../logger.js';
+import { FolderNameSanitizer } from './utils/FolderNameSanitizer.js';
 
 const ALLOWED_REGIONS = ['World', 'Asia', 'Japan', 'Europe', 'USA', 'Australia', 'Taiwan', 'China', 'Korea', 'France', 'Germany', 'Canada', 'Italy', 'Spain', 'Netherlands'];
 const ALLOWED_FLAGS = ['Demo', 'Beta', 'Kiosk', 'Virtual Console', 'DLC', 'Update', 'Channel'];
@@ -124,40 +125,5 @@ export default class MyrientProvider extends Provider {
                 this.hideBrowser ? '--headless=new' : ''
             ]
         });
-    }
-}
-
-class FolderNameSanitizer {
-    static replacer = '_';
-    static reserved = [
-        'CON', 'PRN', 'AUX', 'NUL',
-        ...Array.from({ length: 9 }, (_, i) => `COM${i + 1}`),
-        ...Array.from({ length: 9 }, (_, i) => `LPT${i + 1}`)
-    ];
-    static invalidChars = /[\\/:*?"<>|]/g;
-
-    static sanitize(name, replacer = FolderNameSanitizer.replacer) {
-        if (typeof name !== 'string') {
-            throw new TypeError('Folder name must be a string');
-        }
-
-        let clean = name.replace(FolderNameSanitizer.invalidChars, replacer);
-        clean = clean.replace(/[\. ]+$/, '');
-
-        if (FolderNameSanitizer.reserved.includes(clean.toUpperCase())) {
-            clean += replacer;
-        }
-
-        if (clean.length > 255) {
-            clean = clean.slice(0, 255);
-        }
-
-        if (!clean) {
-            const now = new Date();
-            const timestamp = now.toISOString().slice(0, 19).replace(/:/g, '-');
-            return `File-${timestamp}`;
-        }
-
-        return clean;
     }
 }

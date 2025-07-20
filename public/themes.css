@@ -32,6 +32,8 @@
 
     --scrollbar-thumb: #151e31;
     --transition: all 0.3s ease;
+    --transition-sidebar: right 0.3s ease;
+    --transition-main: margin-right 0.3s ease;
 
     --toast-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     --toast-animation: slideIn 2s ease;

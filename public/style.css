@@ -112,7 +112,7 @@ main {
     align-items: center;
     position: relative;
     padding: 0;
-    transition: var(--transition);
+    transition: var(--transition-main);
     min-height: 100dvh;
 
     .searchArea {
@@ -455,7 +455,7 @@ main {
     background: var(--sidebar-background);
     backdrop-filter: var(--blur);
     border-left: var(--element-border);
-    transition: var(--transition);
+    transition: var(--transition-sidebar);
     z-index: 90;
     overflow-y: auto;
     display: flex;

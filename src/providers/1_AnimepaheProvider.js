@@ -7,7 +7,7 @@ import path from 'path';
 export default class AnimepaheProvider extends Provider {
     constructor() {
         super();
-        this.name = 'Animepahe'; // name, id, and icon are required, icon is the name of the image file in ./icons/
+        this.name = 'Anime (animepahe)'; // name, id, and icon are required, icon is the name of the image file in "./icons/"
         this.id = 'animepahe';
         this.icon = 'animepahe.png';
         this.searchPlaceholder = 'Search anime...';

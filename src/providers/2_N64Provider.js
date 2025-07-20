@@ -3,7 +3,7 @@ import MyrientProvider from '../MyrientProvider.js';
 export default class N64Provider extends MyrientProvider {
     constructor() {
         super();
-        this.name = 'Nintendo 64';
+        this.name = 'Nintendo 64 (Myrient)';
         this.id = 'n64';
         this.icon = 'n64.png';
         this.searchPlaceholder = 'Search N64 games...';
