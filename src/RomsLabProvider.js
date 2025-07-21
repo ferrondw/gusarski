@@ -3,7 +3,7 @@ import Provider from './Provider.js';
 import { chromium } from 'playwright';
 import fs from 'fs';
 import path from 'path';
-import Unrar from 'node-unrar-js';
+import { createExtractorFromFile } from 'node-unrar-js';
 
 export default class RomsLabProvider extends Provider {
     constructor() {
@@ -86,7 +86,7 @@ export default class RomsLabProvider extends Provider {
 
         } catch (e) {
             logger.logError('Download failed: ' + e.message);
-            return [];
+            throw new Error('Download failed');
         } finally {
             if (browser) await browser.close();
         }
@@ -104,63 +104,86 @@ export default class RomsLabProvider extends Provider {
         });
     }
 
+    logDirectoryTree(dir, prefix = '') {
+        if (!fs.existsSync(dir)) return;
+        const entries = fs.readdirSync(dir, { withFileTypes: true });
+        for (const entry of entries) {
+            const fullPath = path.join(dir, entry.name);
+            console.log(`${prefix}${entry.name}`);
+            if (entry.isDirectory()) {
+                this.logDirectoryTree(fullPath, `${prefix}  `);
+            }
+        }
+    }
+
+    flattenDirectory(dir, rootDir) {
+        const entries = fs.readdirSync(dir, { withFileTypes: true });
+        for (const entry of entries) {
+            const fullPath = path.join(dir, entry.name);
+            if (entry.isDirectory()) {
+                this.flattenDirectory(fullPath, rootDir);
+                fs.rmdirSync(fullPath);
+            } else {
+                const destPath = path.join(rootDir, entry.name);
+                fs.renameSync(fullPath, destPath);
+            }
+        }
+    }
+
     async handleDownloadLink(page, gameTitle, folderName) {
         try {
-            const context = page.context();
-            context.on('page', p => p !== page && p.close());
-
-            await page.waitForSelector('#downloadForm', { timeout: this.selectorTimeout });
-            const submitBtnLocator = page.locator('#method_free');
-            await submitBtnLocator.waitFor({ state: 'visible', timeout: this.selectorTimeout });
-            await page.waitForTimeout(1000);
-            await Promise.all([
-                page.waitForNavigation({ waitUntil: 'networkidle', timeout: this.selectorTimeout }),
-                submitBtnLocator.evaluate(btn => btn.click())
-            ]);
-
-            const btnSelector = 'div.shrink-0.w-full.md\\:w-auto > button';
-            await page.waitForSelector(btnSelector, { timeout: this.selectorTimeout });
-            await page.evaluate(selector => document.querySelector(selector).click(), btnSelector);
-            await page.waitForFunction(
-                selector => {
-                    const btn = document.querySelector(selector);
-                    return btn && btn.innerText.trim().startsWith('Continue');
-                },
-                btnSelector,
-                { timeout: this.selectorTimeout + 5000 }
-            );
-
-            const [download] = await Promise.all([
-                page.waitForEvent('download'),
-                page.evaluate(selector => document.querySelector(selector).click(), btnSelector)
-            ]);
-
-            const fileName = download.suggestedFilename();
             const safeTitle = gameTitle.replace(/[^a-z0-9\-]/gi, '_');
             const tempDir = path.join(this.basePath, safeTitle, 'temp');
             const outDir = path.join(this.basePath, safeTitle, folderName);
             fs.mkdirSync(tempDir, { recursive: true });
             fs.mkdirSync(outDir, { recursive: true });
 
-            const tempFile = path.join(tempDir, fileName);
-            await download.saveAs(tempFile);
+            await page.waitForSelector('#downloadForm', { timeout: this.selectorTimeout });
+            const freeBtn = page.locator('#method_free');
+            await freeBtn.waitFor({ state: 'visible', timeout: this.selectorTimeout });
+            await page.waitForTimeout(1000);
+            await Promise.all([
+                page.waitForNavigation({ waitUntil: 'networkidle', timeout: this.selectorTimeout }),
+                freeBtn.evaluate(btn => btn.click())
+            ]);
 
-            const data = fs.readFileSync(tempFile);
-            const extractor = await Unrar.createExtractorFromData(data);
+            const btnSelector = 'div.shrink-0.w-full.md\\:w-auto > button';
+            await page.waitForSelector(btnSelector, { timeout: this.selectorTimeout });
+            await page.evaluate(sel => document.querySelector(sel).click(), btnSelector);
+            await page.waitForFunction(
+                sel => document.querySelector(sel)?.innerText.trim().startsWith('Continue'),
+                btnSelector,
+                { timeout: this.selectorTimeout + 5000 }
+            );
+
+            const [download] = await Promise.all([
+                page.waitForEvent('download'),
+                page.evaluate(sel => document.querySelector(sel).click(), btnSelector)
+            ]);
+
+            const archiveName = download.suggestedFilename();
+            const archivePath = path.join(tempDir, archiveName);
+            await download.saveAs(archivePath);
+            console.log('Archive saved to:', archivePath);
+
+            const extractor = await createExtractorFromFile({
+                filepath: archivePath,
+                targetPath: outDir
+            });
             const extracted = extractor.extract();
-            console.log(extracted);
-            if (extracted[0].state !== 'SUCCESS') throw new Error('RAR extraction failed');
+            const files = [...extracted.files];
+            console.log(`Extracted ${files.length} entries to ${outDir}`);
+            files.forEach(f => console.log('  →', f.fileHeader.name));
 
-            for (const file of extracted[1].files) {
-                const outputPath = path.join(outDir, file.fileHeader.name);
-                fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-                fs.writeFileSync(outputPath, file.extract[1]);
-            }
+            this.flattenDirectory(outDir, outDir);
+
+            console.log('Final files in outDir:');
+            this.logDirectoryTree(outDir);
 
             fs.rmSync(tempDir, { recursive: true, force: true });
             logger.logInfo(`Downloaded and extracted ${folderName} for ${gameTitle}`);
         } catch (e) {
-            logger.logError(`Error in handleDownloadLink (${folderName}): ${e.message}`);
+            logger.logError(`Error in handleDownloadLink (${folderName}):`, e);
             throw new Error('Download error during handleDownloadLink');
         }
     }

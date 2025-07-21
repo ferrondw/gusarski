@@ -116,12 +116,12 @@ main {
     min-height: 100dvh;
 
     .searchArea {
-        margin-top: 15px;
+        margin-top: 14px;
         width: 350px;
+        height: 52px;
         position: relative;
         z-index: 2;
         position: sticky;
-        top: 15px;
         display: flex;
         flex-direction: row;
         justify-content: center;
@@ -131,7 +131,7 @@ main {
         border-radius: var(--border-radius-rounded);
         transition: var(--transition);
         gap: 10px;
-        padding: 0px 7px 0px 16px;
+        padding: 0px 5px 0px 16px;
         backdrop-filter: var(--blur);
 
         &:has(#searchQuery:focus) {
@@ -142,7 +142,6 @@ main {
         #searchQuery {
             background: #0000;
             border: unset;
-            height: 52px;
             font-size: 16px;
             color: var(--text);
             transition: var(--transition);
@@ -704,9 +703,9 @@ main {
 
     main {
         .searchArea {
-            margin-top: 8px;
+            margin-top: 7.5px;
+            height: 45px;
             width: calc(100% - 140px);
-            top: 8px;
 
             #searchQuery {
                 height: 45px;
@@ -854,6 +853,7 @@ main {
                 svg {
                     width: 20px;
                     height: 20px;
+                    transform: translateY(1px);
                 }
             }
         }
