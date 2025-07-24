@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Gusarski | Login</title>
+        <link rel="shortcut icon" href="assets/images/favicon.png" type="image/png">
+        <link rel="stylesheet" href="assets/styles/style.css">
+        <link rel="stylesheet" href="assets/styles/themes.css">
+        <link rel="stylesheet" href="assets/styles/auth.css">
+        <script src="assets/scripts/auth.js"></script>
+    </head>
+    <body>
+        <div class="card">
+            <h1>Please Log In</h1>
+            <div id="error" style="display: none;">
+                nah
+            </div>
+            <form
+                id="loginForm"
+                method="POST"
+                action="/login"
+                autocomplete="off"
+            >
+                <input
+                    type="text"
+                    name="username"
+                    id="username"
+                    placeholder="Username"
+                    required
+                >
+                <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    placeholder="Password"
+                    required
+                >
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </body>
+</html>

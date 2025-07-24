@@ -20,6 +20,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('cycleThemeButton').addEventListener('click', () => {
         cycleThemes();
     });
+
+    document.getElementById('shortcutsButton').addEventListener('click', () => {
+        openModal('shortcutModal');
+    });
+
+    document.getElementById('closeModalButton').addEventListener('click', () => {
+        closeModal();
+    });
+    
+    let modalContainer = document.getElementById('modalContainer');
+    modalContainer.addEventListener('click', (event) => {
+        if (event.target === modalContainer) {
+            closeModal();
+        }
+    });
 });
 
 async function search(overwriteQuery) {
@@ -185,13 +200,29 @@ function attemptReconnect() {
 }
 //#endregion
 
-//#region Sidebar
+//#region Menus
 function toggleSidebar() {
     let sidebar = document.getElementById('queueSidebar');
-    let toggleBtn = document.querySelector('.sidebarToggle');
+    let toggleButton = document.querySelector('.sidebarToggle');
 
     sidebar.classList.toggle('open');
-    toggleBtn.querySelector('svg').style.transform = sidebar.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+    toggleButton.querySelector('svg').style.transform = sidebar.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+
+function openModal(id) {
+    let modalContent = document.getElementById(id);
+    let modalContainer = document.getElementById('modalContainer');
+
+    modalContainer.classList.add('open');
+}
+
+function closeModal() {
+    let modalContainer = document.getElementById('modalContainer');
+
+    modalContainer.classList.remove('open');
+    for (let modalContent of modalContainer.children) {
+        modalContent.classList.remove('open');
+    }
 }
 
 let touchStartX = 0;
@@ -208,14 +239,14 @@ document.addEventListener('touchend', (event) => {
     let deltaX = touchEndX - touchStartX;
     let deltaY = event.changedTouches[0].clientY - touchStartY;
     let sidebar = document.getElementById('queueSidebar');
-    let toggleBtn = document.querySelector('.sidebarToggle');
+    let toggleButton = document.querySelector('.sidebarToggle');
 
     if (deltaX > 50 && Math.abs(deltaY) < 50) {
         sidebar.classList.remove('open');
-        toggleBtn.querySelector('svg').style.transform = 'rotate(0deg)';
+        toggleButton.querySelector('svg').style.transform = 'rotate(0deg)';
     } else if (deltaX < -50 && Math.abs(deltaY) < 50) {
         sidebar.classList.add('open');
-        toggleBtn.querySelector('svg').style.transform = 'rotate(180deg)';
+        toggleButton.querySelector('svg').style.transform = 'rotate(180deg)';
     }
 });
 
@@ -225,8 +256,8 @@ document.addEventListener('keydown', (event) => { // shortcuts
     if (event.key === '/') {
         event.preventDefault();
         let sidebar = document.getElementById('queueSidebar');
-        let toggleBtn = document.querySelector('.sidebarToggle');
-        let svgIcon = toggleBtn.querySelector('svg');
+        let toggleButton = document.querySelector('.sidebarToggle');
+        let svgIcon = toggleButton.querySelector('svg');
 
         sidebar.classList.toggle('open');
         let isOpen = sidebar.classList.contains('open');
@@ -288,6 +319,7 @@ function refreshTheme() {
 // clean? no. does it work? yes.
 // makes all the methods usable directly in html, need to define this specifically because it is a module
 window.toggleSidebar = toggleSidebar;
+window.openModal = openModal;
 window.search = search;
 window.addToQueue = addToQueue;
 window.renderQueue = renderQueue;

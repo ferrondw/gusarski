@@ -30,6 +30,8 @@
     --sidebar-background: rgba(15, 23, 42, 0.9);
     --sidebar-shadow: -10px 0 20px rgba(0, 0, 0, 0.3);
 
+    --modal-background: #0009;
+
     --scrollbar-thumb: #151e31;
     --transition: all 0.3s ease;
     --transition-sidebar: right 0.3s ease;

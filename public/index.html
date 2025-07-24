@@ -4,14 +4,14 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Gusarski</title>
-        <link rel="shortcut icon" href="favicon.png" type="image/png">
-        <link rel="stylesheet" href="themes.css">
-        <link rel="stylesheet" href="style.css">
-        <script type="module" src="client.js"></script>
+        <link rel="shortcut icon" href="assets/images/favicon.png" type="image/png">
+        <link rel="stylesheet" href="assets/styles/style.css">
+        <link rel="stylesheet" href="assets/styles/themes.css">
+        <script type="module" src="assets/scripts/client.js"></script>
     </head>
     <body>
         <header>
-            <img class="logo" src="favicon.png" alt="Logo">
+            <img class="logo" src="assets/images/favicon.png" alt="Logo">
             <button class="sidebarToggle" onclick="toggleSidebar()" title="Toggle Sidebar (/)">
                 <svg width="24px" height="24px" viewBox="0 -960 960 960">
                     <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/>
@@ -39,7 +39,7 @@
                         <path d="m20,4h-8.59l-1.41-1.41c-.38-.38-.88-.59-1.41-.59h-4.59c-1.1,0-2,.9-2,2v14c0,1.1.9,2,2,2h16c1.1,0,2-.9,2-2V6c0-1.1-.9-2-2-2Zm0,14H4s0-12,0-12h16v12Z"></path>
                     </svg>
                 </button>
-                <button id="shortcutsButton" disabled title="Shortcuts (none)">
+                <button id="shortcutsButton" title="Shortcuts (none)">
                     <svg viewBox="0 0 24 24">
                         <path d="m21,4H3c-1.1,0-2,.9-2,2v12c0,1.1.9,2,2,2h18c1.1,0,2-.9,2-2V6c0-1.1-.9-2-2-2ZM3,18V6h18v12s-18,0-18,0Z"></path>
                         <path d="M5 8H7V10H5z"></path>
@@ -83,6 +83,18 @@
                 <div id="emptyMessage" class="centerMessage">Nothing here yet (；′⌒`)</div>
             </div>
         </main>
+        <div id="modalContainer">
+            <div class="modalContent" id="shortcutModal">
+                <div class="modalHeader">
+                    <h2>Keyboard Shortcuts</h2>
+                    <button id="closeModalButton">
+                        <svg viewBox="4.11366 5.91366 8.759 8.758">
+                            <path d="m9.613 10.293 3.032-3.033a.792.792 0 00-1.12-1.12l-3.031 3.033-3.034-3.033a.792.792 0 00-1.12 1.12l3.034 3.033-3.033 3.033a.792.792 0 001.12 1.119l3.032-3.033 3.033 3.033a.792.792 0 001.12-1.12z" fill="#ffffff"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
         <div id="toastContainer"></div>
         <svg
             id="wsIcon"

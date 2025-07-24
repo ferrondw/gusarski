@@ -592,6 +592,79 @@ main {
     }
 }
 
+#modalContainer {
+    position: absolute;
+    z-index: 1000;
+    top: 0px;
+    left: 0px;
+    height: 100dvh;
+    width: 100dvw;
+    background-color: var(--modal-background);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: var(--transition);
+
+    &.open{
+        pointer-events: auto;
+        opacity: 1;
+
+        .modalContent{
+            transform: scale(1);
+        }
+    }
+
+    .modalContent {
+        width: 1300px;
+        max-width: 95%;
+        height: 500px;
+        padding: 20px;
+        border-radius: var(--border-radius-outer);
+        background: var(--sidebar-background);
+        border: var(--element-border);
+        transition: var(--transition);
+        backdrop-filter: var(--blur);
+        transform: scale(0.95);
+
+        .modalHeader {
+            width: 100%;
+            height: 80px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+
+            button {
+                background: var(--element-background);
+                border: var(--element-border);
+                color: var(--text);
+                padding: 10px;
+                border-radius: var(--border-radius-rounded);
+                cursor: pointer;
+                transition: var(--transition);
+                display: flex;
+                align-content: center;
+                justify-content: center;
+                width: 30px;
+                height: 30px;
+
+                &:hover {
+                    background: var(--element-background-hover);
+                    border-color: var(--element-border-hover);
+                }
+
+                svg {
+                    width: 100%;
+                    height: 100%;
+                    fill: var(--text);
+                    /* is it slightly off center for no reason */
+                }
+            }
+        }
+    }
+}
+
 #toastContainer {
     position: fixed;
     bottom: 24px;

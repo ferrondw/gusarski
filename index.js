@@ -1,21 +1,73 @@
 import { fileURLToPath, pathToFileURL } from 'url';
 import { WebSocket, WebSocketServer } from 'ws';
+import session from 'express-session';
 import bodyParser from 'body-parser';
 import { logger } from './logger.js';
 import { readdirSync } from 'fs';
 import express from 'express';
+import dotenv from 'dotenv';
 import http from 'http';
 import path from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+dotenv.config();
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const QUEUE_BATCH_LIMIT = 5;
 
 //#region Express Server Setup
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
+const useAuthentication = Boolean(process.env.AUTH_USERNAME && process.env.AUTH_PASSWORD);
+
+if (useAuthentication) { // could make it seperate if statements because of the regions but eh
+    app.use(session({
+        secret: process.env.SESSION_SECRET || '+W2M}M`DhHKT>`i24f9$',
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            httpOnly: true
+        }
+    }));
+}
+//#endregion
+
+//#region Auth Routes & Middleware
+if (useAuthentication) {
+    app.get('/auth', (req, res) => {
+        if (req.session.loggedIn) {
+            return res.redirect('/');
+        }
+        return res.sendFile(path.join(__dirname, 'public', 'auth.html'));
+    });
+
+    app.post('/login', (req, res) => {
+        let { username, password } = req.body;
+        if (username === process.env.AUTH_USERNAME && password === process.env.AUTH_PASSWORD) {
+            req.session.loggedIn = true;
+            return res.redirect('/');
+        }
+        req.session.destroy(() => {
+            res.redirect('/auth?fail=1');
+        });
+    });
+
+    app.use((req, res, next) => {
+        const publicPaths = ['/auth', '/login'];
+        const isPublic = publicPaths.includes(req.path) || req.path.startsWith('/assets/');
+
+        if (isPublic) return next();
+        if (req.session?.loggedIn) return next();
+        return res.redirect('/auth');
+    });
+} else {
+    logger.logWarning('Auth disabled');
+}
+//#endregion
+
+//#region Static Assets & Providers Icons
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/icons', express.static(path.join(__dirname, 'src', 'providers', 'icons')));
 app.use(express.json());
@@ -32,11 +84,7 @@ const providers = await (async () => {
     let modules = await Promise.all(
         filePaths.map(filePath => import(pathToFileURL(path.join(providersDir, filePath)).href))
     );
-
-    return modules.map(m => {
-        let Provider = m.default;
-        return new Provider();
-    });
+    return modules.map(m => new m.default());
 })();
 
 //#region WebSocket Setup
@@ -46,7 +94,7 @@ const wss = new WebSocketServer({ server });
 wss.on('connection', ws => {
     ws.send(JSON.stringify({ type: 'queue', queue: downloadQueue })); // send the newly connected client the queue
     ws.on('message', msg => {
-        var data;
+        let data;
         try { data = JSON.parse(msg); } catch { return; }
         switch (data.action) {
             case 'add': addTask(data.providerID, data.data); break;
@@ -65,7 +113,7 @@ function moveQueue() {
     while (currentDownloadCount < QUEUE_BATCH_LIMIT) {
         let nextTask = downloadQueue.find(task => task.state === 'pending');
         if (!nextTask) break;
-        runDownload(nextTask);
+        download(nextTask);
     }
 }
 
@@ -103,11 +151,11 @@ function retryTask(id) {
 
 function forceTask(id) {
     let task = downloadQueue.find(task => task.id == id);
-    runDownload(task);
+    download(task);
     return task;
 }
 
-async function runDownload(task) {
+async function download(task) {
     task.state = "downloading";
     currentDownloadCount++;
 
@@ -130,8 +178,6 @@ async function runDownload(task) {
             broadcastQueue();
             moveQueue();
         });
-    broadcastQueue();
-    return task;
 }
 //#endregion
 

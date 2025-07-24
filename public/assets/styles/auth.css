@@ -1,0 +1,76 @@
+body{
+    display: flex;
+    align-items: center;
+    justify-self: center;
+}
+
+.card {
+    border-radius: var(--border-radius-outer);
+    background: var(--sidebar-background);
+    border: var(--element-border);
+    transition: var(--transition);
+    backdrop-filter: var(--blur);
+    width: 520px;
+    max-width: 95%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    h1 {
+        margin-bottom: 1rem;
+        font-size: 2rem;
+        width: 100%;
+        text-align: center;
+        color: var(--text);
+    }
+
+    #error {
+        color: #c00;
+        margin-bottom: 1rem;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+
+        input {
+            outline: none;
+            width: 350px;
+            height: 52px;
+            position: relative;
+            z-index: 2;
+            position: sticky;
+            background: var(--element-background);
+            border: var(--element-border);
+            border-radius: var(--border-radius-rounded);
+            color: var(--text);
+            transition: var(--transition);
+            padding: 0px 5px 0px 16px;
+            backdrop-filter: var(--blur);
+
+            &:focus {
+                background: var(--element-background-hover);
+                border-color: var(--element-border-hover);
+            }
+        }
+
+        button {
+            width: 200px;
+            background: var(--element-background);
+            border: var(--element-border);
+            color: var(--text);
+            padding: 12px 24px;
+            border-radius: var(--border-radius-inner);
+            cursor: pointer;
+            transition: var(--transition);
+
+            &:hover {
+                background: var(--element-background-hover);
+                border-color: var(--element-border-hover);
+            }
+        }
+    }
+}
