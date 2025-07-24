@@ -26,6 +26,7 @@ body{
     }
 
     #error {
+        display: none;
         color: #c00;
         margin-bottom: 1rem;
     }
