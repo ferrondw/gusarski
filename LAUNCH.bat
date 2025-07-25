@@ -1,5 +1,12 @@
 @echo off
 
+call git pull
+if %ERRORLEVEL% neq 0 (
+    echo Git pull failed with error code %ERRORLEVEL%.
+    pause
+    exit /b %ERRORLEVEL%
+)
+
 call npm install
 if %ERRORLEVEL% neq 0 (
     echo npm install failed with error code %ERRORLEVEL%.
