@@ -1,4 +1,4 @@
-import { logger } from '../../logger.js';
+import { Logger } from '../utils/Logger.js';
 import Provider from '../Provider.js';
 import { chromium } from 'playwright';
 import { mkdirp } from 'mkdirp';
@@ -43,7 +43,7 @@ export default class AnimepaheProvider extends Provider {
             return results;
 
         } catch (err) {
-            logger.logError('Search failed', err);
+            Logger.error('Search failed', err);
         }
     }
 
@@ -77,9 +77,9 @@ export default class AnimepaheProvider extends Provider {
             }
 
             task.addMessage("Download completed.");
-            logger.logSuccess(`Download completed: ${task.data.title}`);
+            Logger.success(`Download completed: ${task.data.title}`);
         } catch (e) {
-            logger.logError(`Error downloading ${task.data.title}`, e);
+            Logger.error(`Error downloading ${task.data.title}`, e);
             throw new Error('Error downloading');
         } finally {
             try { // closing the browser if it isn't already closed
@@ -87,7 +87,7 @@ export default class AnimepaheProvider extends Provider {
                     await browser.close();
                 }
             } catch (e) {
-                logger.logWarning("Error while closing the browser: " + e.message);
+                Logger.warning("Error while closing the browser: " + e.message);
             }
         }
     }
@@ -196,7 +196,7 @@ export default class AnimepaheProvider extends Provider {
         let popup = await this.openPopup(page, downloadOption.option, downloadOption.resolution, addMessage);
 
         if (!popup) {
-            logger.logError(`Failed to open popup for ${downloadOption.resolution}p resolution.`);
+            Logger.error(`Failed to open popup for ${downloadOption.resolution}p resolution.`);
             return; // or 'continue;' to check the other options? not sure yet
         }
 
@@ -205,7 +205,7 @@ export default class AnimepaheProvider extends Provider {
 
         if (!episodeDownload || episodeDownload == null) {
             await popup.close();
-            logger.logError(`Download failed to start after ${this.maxDownloadRetries} attempts for Episode ${episodeNumber}.`);
+            Logger.error(`Download failed to start after ${this.maxDownloadRetries} attempts for Episode ${episodeNumber}.`);
             return;
         }
 
@@ -251,12 +251,12 @@ export default class AnimepaheProvider extends Provider {
                 let popup = await page.waitForEvent('popup', { timeout: this.selectorTimeout });
                 if (popup) return popup;
             } catch (e) {
-                logger.logWarning(`openPopup: attempt ${attempt + 1} failed: ${e.message}`);
+                Logger.warning(`openPopup: attempt ${attempt + 1} failed: ${e.message}`);
                 addMessage(`Retrying ${resolution}p option (attempt ${attempt + 1})...`);
                 await page.waitForTimeout(1000); // "net::ERR_ABORTED; maybe frame was detached?", hope this will fix it, it not just remove this line
             }
         }
-        logger.logError(`Failed to open popup in ${resolution}p after ${this.maxPopupRetries} attempts.`);
+        Logger.error(`Failed to open popup in ${resolution}p after ${this.maxPopupRetries} attempts.`);
         return null;
     }
 
@@ -291,16 +291,16 @@ export default class AnimepaheProvider extends Provider {
                 return download;
             } catch (e) {
                 if (attempt < this.maxDownloadRetries) {
-                    logger.logWarning(`Download didn’t start (attempt ${attempt}): ${e.message}`);
+                    Logger.warning(`Download didn’t start (attempt ${attempt}): ${e.message}`);
                     addMessage(`Download didn’t start, retrying... (attempt ${attempt})`);
                     try { // if it errors just wait a bit, this whole code block is in a for loop anyways
                         await popup.reload({ waitUntil: 'networkidle' });
                     } catch (reloadErr) {
-                        logger.logWarning(`popup.reload() failed: ${reloadErr.message}`);
+                        Logger.warning(`popup.reload() failed: ${reloadErr.message}`);
                         await popup.waitForTimeout(1000); // same here, download takes a while anyways so waiting a second doesn't hurt anyone... i think
                     }
                 } else {
-                    logger.logError(`All download attempts failed.`);
+                    Logger.error(`All download attempts failed.`);
                     addMessage(`All download attempts failed, skipping episode...`);
                 }
             }

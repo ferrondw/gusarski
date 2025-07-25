@@ -2,7 +2,7 @@ import { fileURLToPath, pathToFileURL } from 'url';
 import { WebSocket, WebSocketServer } from 'ws';
 import session from 'express-session';
 import bodyParser from 'body-parser';
-import { logger } from './logger.js';
+import { Logger } from './src/utils/Logger.js';
 import { readdirSync } from 'fs';
 import express from 'express';
 import dotenv from 'dotenv';
@@ -63,7 +63,7 @@ if (useAuthentication) {
         return res.redirect('/auth');
     });
 } else {
-    logger.logWarning('Auth disabled');
+    Logger.warning('Auth disabled');
 }
 //#endregion
 
@@ -161,7 +161,7 @@ async function download(task) {
 
     task.addMessage = (message) => {
         task.progressMessages.push(message);
-        logger.logInfo(`${task.data.title} (Task ${task.id}): ${message}`);
+        Logger.info(`${task.data.title} (Task ${task.id}): ${message}`);
         broadcastQueue();
     };
 
@@ -189,19 +189,19 @@ app.get('/search/:providerID/:query', async (req, res) => {
 
         if (!query || query.length == 0) {
             res.status(500);
-            logger.logError(`No query given, search could not be started.`);
+            Logger.error(`No query given, search could not be started.`);
         }
 
         if (!providerID || providerID >= providers.length || providerID < 0) {
             res.status(500);
-            logger.logError(`No provider ID given, search could not be started.`);
+            Logger.error(`No provider ID given, search could not be started.`);
         }
 
         var results = await providers[providerID].search(query);
 
         if (!results || results.length == 0) {
             res.status(500);
-            logger.logError(`No results`);
+            Logger.error(`No results`);
         }
 
         res.json(results);
@@ -230,7 +230,7 @@ app.get('/proxy', async (req, res) => {
         res.send(buffer);
     } catch (err) {
         res.status(500).send("Error fetching url");
-        logger.logError(`Proxy failed for: ${targetUrl}`, err);
+        Logger.error(`Proxy failed for: ${targetUrl}`, err);
     }
 });
 
@@ -240,5 +240,5 @@ app.get('/providers', async (req, res) => {
 //#endregion
 
 server.listen(PORT, () => {
-    logger.logInfo(`Server listening at http://localhost:${PORT}`);
+    Logger.info(`Server listening at http://localhost:${PORT}`);
 });

@@ -1,4 +1,4 @@
-import { logger } from '../logger.js';
+import { Logger } from './utils/Logger.js';
 import Provider from './Provider.js';
 import { chromium } from 'playwright';
 import fs from 'fs';
@@ -45,10 +45,10 @@ export default class RomsLabProvider extends Provider {
                 results.push({ title, href, poster });
             }
 
-            logger.logInfo(`Found ${results.length} results for query: ${query}`);
+            Logger.info(`Found ${results.length} results for query: ${query}`);
             return results;
         } catch (e) {
-            logger.logError('Search failed: ' + e.message);
+            Logger.error('Search failed: ' + e.message);
             return [];
         } finally {
             if (browser) await browser.close();
@@ -85,7 +85,7 @@ export default class RomsLabProvider extends Provider {
             }
 
         } catch (e) {
-            logger.logError('Download failed: ' + e.message);
+            Logger.error('Download failed: ' + e.message);
             throw new Error('Download failed');
         } finally {
             if (browser) await browser.close();
@@ -181,9 +181,9 @@ export default class RomsLabProvider extends Provider {
             this.logDirectoryTree(outDir);
 
             fs.rmSync(tempDir, { recursive: true, force: true });
-            logger.logInfo(`Downloaded and extracted ${folderName} for ${gameTitle}`);
+            Logger.info(`Downloaded and extracted ${folderName} for ${gameTitle}`);
         } catch (e) {
-            logger.logError(`Error in handleDownloadLink (${folderName}):`, e);
+            Logger.error(`Error in handleDownloadLink (${folderName}):`, e);
             throw new Error('Download error during handleDownloadLink');
         }
     }

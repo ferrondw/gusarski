@@ -1,4 +1,4 @@
-import { logger } from '../../logger.js';
+import { Logger } from '../utils/Logger.js';
 import Provider from '../Provider.js';
 import JSZip from 'jszip';
 import { mkdirp } from 'mkdirp';
@@ -44,7 +44,7 @@ export default class MangaDexProvider extends Provider {
                             count += Object.keys(v.chapters || {}).length;
                         });
                     } catch (e) {
-                        logger.logWarning(`Failed to fetch aggregate for ${title}`, e);
+                        Logger.warning(`Failed to fetch aggregate for ${title}`, e);
                     }
 
                     return {
@@ -78,7 +78,7 @@ export default class MangaDexProvider extends Provider {
         }
 
         task.addMessage('Download complete');
-        logger.logSuccess(`Completed download: ${title}`);
+        Logger.success(`Completed download: ${title}`);
     }
 
     async fetchChapters(mangaId) {

@@ -3,7 +3,7 @@ import { chromium } from 'playwright';
 import fs from 'fs';
 import path from 'path';
 import unzipper from 'unzipper';
-import { logger } from '../logger.js';
+import { Logger } from './utils/Logger.js';
 import { FolderNameSanitizer } from './utils/FolderNameSanitizer.js';
 
 const ALLOWED_REGIONS = ['World', 'Asia', 'Japan', 'Europe', 'USA', 'Australia', 'Taiwan', 'China', 'Korea', 'France', 'Germany', 'Canada', 'Italy', 'Spain', 'Netherlands'];
@@ -65,7 +65,7 @@ export default class MyrientProvider extends Provider {
                     await browser.close();
                 }
             } catch (e) {
-                logger.logWarning("Error while closing the browser: " + e.message);
+                Logger.warning("Error while closing the browser: " + e.message);
             }
         }
     }
@@ -102,7 +102,7 @@ export default class MyrientProvider extends Provider {
                 task.addMessage(`Failed to delete ZIP`);
             }
         } catch (e) {
-            logger.logError(`Error downloading ${task.data.title}`, e);
+            Logger.error(`Error downloading ${task.data.title}`, e);
             throw new Error('Error downloading');
         } finally {
             try {
@@ -110,7 +110,7 @@ export default class MyrientProvider extends Provider {
                     await browser.close();
                 }
             } catch (e) {
-                logger.logWarning("Error while closing the browser: " + e.message);
+                Logger.warning("Error while closing the browser: " + e.message);
             }
         }
     }
