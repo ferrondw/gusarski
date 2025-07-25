@@ -7,11 +7,50 @@ var socket;
 var currentProviderID = 0;
 var providers;
 
+const shortcuts = [
+    {
+        name: 'Previous Provider',
+        keybind: { ctrl: false, shift: true, alt: false, key: ',' },
+        action: () => pickProvider((currentProviderID - 1 + providers.length) % providers.length)
+    },
+    {
+        name: 'Next Provider',
+        keybind: { ctrl: false, shift: true, alt: false, key: '.' },
+        action: () => pickProvider((currentProviderID + 1) % providers.length)
+    },
+    {
+        name: 'Focus Search',
+        keybind: { ctrl: true, shift: false, alt: false, key: 'K' },
+        action: () => document.getElementById('searchQuery').focus()
+    },
+    {
+        name: 'Open Shortcuts Menu',
+        keybind: { ctrl: true, shift: false, alt: false, key: '/' },
+        action: () => document.getElementById('modalContainer').classList.add('open')
+    },
+    {
+        name: 'Toggle Sidebar',
+        keybind: { ctrl: true, shift: false, alt: false, key: 'B' },
+        action: () => {
+            let sidebar = document.getElementById('queueSidebar');
+            let svg = document.querySelector('.sidebarToggle svg');
+            sidebar.classList.toggle('open');
+            svg.style.transform = sidebar.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+    },
+    {
+        name: 'Close Modal',
+        keybind: { ctrl: false, shift: false, alt: false, key: 'Escape' },
+        action: () => document.getElementById('modalContainer').classList.remove('open')
+    }
+];
+
 document.addEventListener('DOMContentLoaded', async () => {
     setupWebSocket();
     providers = await getProviders();
     pickProvider(0);
     refreshTheme();
+    setupShortcuts();
 
     document.getElementById('providerButton').addEventListener('click', () => {
         document.getElementById('providerPicker').classList.toggle('open');
@@ -28,7 +67,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('closeModalButton').addEventListener('click', () => {
         closeModal();
     });
-    
+
     let modalContainer = document.getElementById('modalContainer');
     modalContainer.addEventListener('click', (event) => {
         if (event.target === modalContainer) {
@@ -183,7 +222,7 @@ function setupWebSocket() {
     });
 
     socket.addEventListener('message', event => {
-        const data = JSON.parse(event.data);
+        let data = JSON.parse(event.data);
         if (data.type === 'queue') {
             renderQueue(data.queue);
         }
@@ -210,15 +249,12 @@ function toggleSidebar() {
 }
 
 function openModal(id) {
-    let modalContent = document.getElementById(id);
     let modalContainer = document.getElementById('modalContainer');
-
     modalContainer.classList.add('open');
 }
 
 function closeModal() {
     let modalContainer = document.getElementById('modalContainer');
-
     modalContainer.classList.remove('open');
     for (let modalContent of modalContainer.children) {
         modalContent.classList.remove('open');
@@ -250,34 +286,43 @@ document.addEventListener('touchend', (event) => {
     }
 });
 
-document.addEventListener('keydown', (event) => { // shortcuts
-    if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
+function setupShortcuts() {
+    let list = document.getElementById('shortcutList');
+    shortcuts.forEach(({ name, keybind }) => {
+        let li = document.createElement('li');
+        let span = document.createElement('span');
+        span.textContent = name;
+        span.className = 'shortcutName';
+        li.appendChild(span);
+        ['ctrl', 'shift', 'alt'].forEach(mod => {
+            if (keybind[mod]) {
+                let k = document.createElement('kbd');
+                k.textContent = mod.charAt(0).toUpperCase() + mod.slice(1);
+                li.appendChild(k);
+            }
+        });
+        let keyKbd = document.createElement('kbd');
+        keyKbd.textContent = keybind.key;
+        li.appendChild(keyKbd);
+        list.appendChild(li);
+    });
 
-    if (event.key === '/') {
-        event.preventDefault();
-        let sidebar = document.getElementById('queueSidebar');
-        let toggleButton = document.querySelector('.sidebarToggle');
-        let svgIcon = toggleButton.querySelector('svg');
-
-        sidebar.classList.toggle('open');
-        let isOpen = sidebar.classList.contains('open');
-        svgIcon.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
-    }
-
-    if (event.key === '.') {
-        pickProvider((currentProviderID + 1) % providers.length);
-        showToast(`Quick switched to ${providers[currentProviderID].name}`);
-    }
-
-    if (event.key === ',') {
-        pickProvider((currentProviderID - 1 + providers.length) % providers.length);
-        showToast(`Quick switched to ${providers[currentProviderID].name}`);
-    }
-
-    if (event.key === 'm') {
-        cycleThemes();
-    }
-});
+    document.addEventListener('keydown', (event) => {
+        let tag = event.target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+        shortcuts.forEach(({ keybind, action }) => {
+            let match =
+                (!!event.ctrlKey === keybind.ctrl) &&
+                (!!event.shiftKey === keybind.shift) &&
+                (!!event.altKey === keybind.alt) &&
+                (event.key.toLowerCase() === keybind.key.toLowerCase());
+            if (match) {
+                event.preventDefault();
+                action();
+            }
+        });
+    });
+}
 //#endregion
 
 async function getProviders() {
