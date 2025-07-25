@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 const useAuthentication = Boolean(process.env.AUTH_USERNAME && process.env.AUTH_PASSWORD);
 
-if (useAuthentication) { // could make it seperate if statements because of the regions but eh
+if (useAuthentication) {
     app.use(session({
         secret: process.env.SESSION_SECRET || '+W2M}M`DhHKT>`i24f9$',
         resave: false,
@@ -182,6 +182,7 @@ async function download(task) {
 //#endregion
 
 //#region Endpoints
+// would like to move these to the websocket to not expose any endpoints
 app.get('/search/:providerID/:query', async (req, res) => {
     try {
         let query = req.params.query;

@@ -1,4 +1,4 @@
-const themes = ['dark', 'amoled', 'dingendingen', 'grounded', 'water', 'fire', 'light'];
+const themes = ['dark', 'amoled', 'dingendingen', 'grounded', 'water', 'fire', 'grass', 'light'];
 var currentThemeIndex = parseInt(localStorage.getItem('themeIndex'), 10) || 0;
 
 var socketReconnectInterval = null;
@@ -10,13 +10,18 @@ var providers;
 const shortcuts = [
     {
         name: 'Previous Provider',
-        keybind: { ctrl: false, shift: true, alt: false, key: ',' },
+        keybind: { ctrl: false, shift: false, alt: false, key: ',' },
         action: () => pickProvider((currentProviderID - 1 + providers.length) % providers.length)
     },
     {
         name: 'Next Provider',
-        keybind: { ctrl: false, shift: true, alt: false, key: '.' },
+        keybind: { ctrl: false, shift: false, alt: false, key: '.' },
         action: () => pickProvider((currentProviderID + 1) % providers.length)
+    },
+    {
+        name: 'Close Modal',
+        keybind: { ctrl: false, shift: false, alt: false, key: 'Escape' },
+        action: () => closeModal()
     },
     {
         name: 'Focus Search',
@@ -26,22 +31,24 @@ const shortcuts = [
     {
         name: 'Open Shortcuts Menu',
         keybind: { ctrl: true, shift: false, alt: false, key: '/' },
-        action: () => document.getElementById('modalContainer').classList.add('open')
+        action: () => openModal('shortcutModal')
     },
     {
         name: 'Toggle Sidebar',
         keybind: { ctrl: true, shift: false, alt: false, key: 'B' },
-        action: () => {
-            let sidebar = document.getElementById('queueSidebar');
-            let svg = document.querySelector('.sidebarToggle svg');
-            sidebar.classList.toggle('open');
-            svg.style.transform = sidebar.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
-        }
+        action: () => toggleSidebar()
     },
     {
-        name: 'Close Modal',
-        keybind: { ctrl: false, shift: false, alt: false, key: 'Escape' },
-        action: () => document.getElementById('modalContainer').classList.remove('open')
+        name: 'Reload CSS',
+        keybind: { ctrl: true, shift: true, alt: false, key: 'L' },
+        action: () => { // https://stackoverflow.com/questions/2024486/is-there-an-easy-way-to-reload-css-without-reloading-the-page
+            let links = document.getElementsByTagName("link");
+            for (let cl in links) {
+                let link = links[cl];
+                if (link.rel === "stylesheet")
+                    link.href += "";
+            }
+        }
     }
 ];
 
@@ -49,6 +56,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupWebSocket();
     providers = await getProviders();
     pickProvider(0);
+    setupThemePicker();
     refreshTheme();
     setupShortcuts();
 
@@ -56,17 +64,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('providerPicker').classList.toggle('open');
     });
 
-    document.getElementById('cycleThemeButton').addEventListener('click', () => {
-        cycleThemes();
+    document.getElementById('themesButton').addEventListener('click', () => {
+        openModal('themesModal');
     });
 
     document.getElementById('shortcutsButton').addEventListener('click', () => {
         openModal('shortcutModal');
     });
 
-    document.getElementById('closeModalButton').addEventListener('click', () => {
-        closeModal();
-    });
+    document.querySelectorAll('.closeModalButton').forEach(modal => {
+        modal.addEventListener('click', () => {
+            closeModal();
+        });
+    })
 
     let modalContainer = document.getElementById('modalContainer');
     modalContainer.addEventListener('click', (event) => {
@@ -250,7 +260,10 @@ function toggleSidebar() {
 
 function openModal(id) {
     let modalContainer = document.getElementById('modalContainer');
+    let modalContent = document.getElementById(id);
     modalContainer.classList.add('open');
+    modalContent.classList.add('open');
+    modalContent.style.pointerEvents = 'auto';
 }
 
 function closeModal() {
@@ -258,6 +271,7 @@ function closeModal() {
     modalContainer.classList.remove('open');
     for (let modalContent of modalContainer.children) {
         modalContent.classList.remove('open');
+        modalContent.style.pointerEvents = 'none';
     }
 }
 
@@ -351,14 +365,32 @@ async function pickProvider(id) {
     currentProviderID = id;
 }
 
-function cycleThemes() {
-    currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+function setTheme(index) {
+    currentThemeIndex = index;
     refreshTheme();
 }
 
 function refreshTheme() {
     document.documentElement.className = themes[currentThemeIndex];
     localStorage.setItem('themeIndex', currentThemeIndex);
+}
+
+function setupThemePicker() {
+    let themesModalBody = document.getElementById('themesModalBody');
+
+    for (let theme of themes) {
+        let div = document.createElement('div');
+        div.classList.add('themePreview', theme);
+        div.innerHTML = `<h2>${theme}</h2>
+                         <p>Small text</p>`;
+        let useButton = document.createElement('button');
+        useButton.innerText = 'Use Theme';
+        useButton.addEventListener('click', () => {
+            setTheme(themes.indexOf(theme));
+        });
+        div.appendChild(useButton);
+        themesModalBody.appendChild(div);
+    }
 }
 
 // clean? no. does it work? yes.

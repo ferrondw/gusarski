@@ -605,7 +605,7 @@ main {
     justify-content: center;
     opacity: 0;
     pointer-events: none;
-    transition: var(--transition);
+    transition: opacity 0.3s ease;
 
     &.open {
         pointer-events: auto;
@@ -617,6 +617,7 @@ main {
     }
 
     .modalContent {
+        position: absolute;
         width: 600px;
         max-width: 95%;
         height: min-content;
@@ -627,6 +628,13 @@ main {
         transition: var(--transition);
         backdrop-filter: var(--blur);
         transform: scale(0.95);
+        opacity: 0;
+        pointer-events: none;
+
+        &.open {
+            opacity: 1;
+            transition: var(--transition);
+        }
 
         .modalHeader {
             width: 100%;
@@ -668,6 +676,57 @@ main {
             margin-top: 20px;
             max-height: 100%;
             overflow-y: auto;
+
+            &#themesModalBody {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+
+            .themePreview {
+                padding: 10px;
+                width: 250px;
+                border-radius: var(--border-radius-outer);
+                background: var(--sidebar-background);
+                border: var(--element-border);
+                backdrop-filter: var(--blur);
+                transition: var(--transition);
+                font-family: var(--font);
+                text-transform: var(--text-transform);
+
+                h2 {
+                    color: var(--text);
+                }
+
+                p {
+                    color: var(--text-semi);
+                }
+
+                button {
+                    background: var(--element-background);
+                    border: var(--element-border);
+                    color: var(--text);
+                    padding: 10px;
+                    border-radius: var(--border-radius-inner);
+                    cursor: pointer;
+                    transition: var(--transition);
+                    display: flex;
+                    align-content: center;
+                    justify-content: center;
+
+                    &:hover {
+                        background: var(--element-background-hover);
+                        border-color: var(--element-border-hover);
+                    }
+
+                    svg {
+                        width: 100%;
+                        height: 100%;
+                        fill: var(--text);
+                    }
+                }
+            }
 
             #shortcutList {
                 list-style: none;
