@@ -498,6 +498,7 @@ main {
             padding: 16px;
             margin-bottom: 12px;
             transition: var(--transition);
+            position: relative;
 
             .queueTitle {
                 font-size: 20px;
@@ -513,6 +514,18 @@ main {
                 color: var(--text-semi);
                 font-weight: 500;
                 margin-bottom: 6px;
+            }
+
+            .providerIcon {
+                position: absolute;
+                background: var(--element-background);
+                border: var(--element-border);
+                border-radius: var(--border-radius-inner);
+                top: 10px;
+                right: 10px;
+                width:  35px;
+                height: 35px;
+                padding: 5px;
             }
 
             .queueButtons {
