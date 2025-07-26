@@ -2,7 +2,7 @@
 
 ---
 
-**Provider based Node.js media downloader which runs on a simple WebUI, so simple in fact that is has:**
+**Provider based Node.js media downloader which runs on a simple WebUI, so simple in fact that it has:**
 No ads, no subscriptions, no hidden fees, no shady redirects, no cloud storage, no default light mode, no fake download buttons, no captchas, no data mining, no tracking, no complicated setups, only 1 cookie and even that is optional and needs to be forcefully set my the admin.
 
 ## Features
