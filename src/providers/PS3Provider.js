@@ -6,6 +6,7 @@ export default class PS1Provider extends MyrientProvider {
         this.name = 'PS3 (Myrient)';
         this.id = 'ps3';
         this.icon = 'playstation.png';
+        this.category = 'Playstation ROMs';
         this.searchPlaceholder = 'Search PS3 games...';
         this.baseURL = 'https://myrient.erista.me/files/No-Intro/Sony%20-%20PlayStation%203%20%28PSN%29%20%28Content%29/';
     }

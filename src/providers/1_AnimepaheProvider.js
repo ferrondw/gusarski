@@ -4,12 +4,14 @@ import { chromium } from 'playwright';
 import { mkdirp } from 'mkdirp';
 import path from 'path';
 
-export default class AnimepaheProvider extends Provider {
+export default class AnimepaheProvider extends Provider { // kept the 1_ before the file to always give it priority over other providers
     constructor() {
         super();
         this.name = 'Anime (animepahe)'; // name, id, and icon are required, icon is the name of the image file in "./icons/"
         this.id = 'animepahe';
         this.icon = 'animepahe.png';
+        this.defaultPosterType = 'tv';
+        this.category = 'Anime';
         this.searchPlaceholder = 'Search anime...';
 
         this.baseURL = 'https://animepahe.ru/';

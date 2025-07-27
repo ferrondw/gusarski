@@ -6,6 +6,7 @@ export default class DSProvider extends MyrientProvider {
         this.name = 'DS (Myrient)';
         this.id = 'ds';
         this.icon = 'ds.png';
+        this.category = 'Nintendo ROMs';
         this.searchPlaceholder = 'Search DS games...';
         this.baseURL = 'https://myrient.erista.me/files/No-Intro/Nintendo%20-%20Nintendo%20DS%20%28Decrypted%29/';
     }

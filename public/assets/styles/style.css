@@ -197,7 +197,6 @@ main {
 
     #providerPicker {
         z-index: 1;
-        position: absolute;
         position: fixed;
         top: -300px;
         padding-top: 80px;
@@ -217,6 +216,11 @@ main {
         flex-direction: column;
         gap: 10px;
         overflow: auto;
+
+        h2{
+            margin: 5px -10px -10px -10px;
+            color: var(--text-semi);
+        }
 
         .provider {
             width: 95%;

@@ -11,6 +11,8 @@ export default class MangaDexProvider extends Provider {
         this.name = 'Manga (MangaDex)';
         this.id = 'mangadex';
         this.icon = 'mangadex.png';
+        this.defaultPosterType = 'book';
+        this.category = 'Manga';
         this.searchPlaceholder = 'Search manga...';
 
         this.apiBase = 'https://api.mangadex.org';

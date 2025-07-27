@@ -6,6 +6,7 @@ export default class WiiProvider extends MyrientProvider {
         this.name = 'Wii (Myrient)';
         this.id = 'wii';
         this.icon = 'wii.png';
+        this.category = 'Nintendo ROMs';
         this.searchPlaceholder = 'Search Wii games...';
         this.baseURL = 'https://myrient.erista.me/files/No-Intro/Nintendo%20-%20Wii%20%28Digital%29%20%28CDN%29/';
     }

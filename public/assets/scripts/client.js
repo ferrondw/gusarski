@@ -111,13 +111,21 @@ async function search(overwriteQuery) {
             return;
         }
 
+        // https://medium.com/@numberpicture/nugget-javascript-switch-expressions-e3bf059eefb0
+        // https://boxicons.com
+        let defaultPoster = ({
+            "tv": `<svg class="defaultPoster" viewBox="0 0 24 24"><path d="M20 6h-5.59l2.29-2.29-1.41-1.41L12 5.59 8.71 2.3 7.3 3.71 9.59 6H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2M4 19V8h16v11z"></path></svg>`,
+            "controller": `<svg class="defaultPoster" viewBox="0 0 24 24"><path d="M16 11a1 1 0 1 0 0 2 1 1 0 1 0 0-2M18 9a1 1 0 1 0 0 2 1 1 0 1 0 0-2M16 7a1 1 0 1 0 0 2 1 1 0 1 0 0-2M14 9a1 1 0 1 0 0 2 1 1 0 1 0 0-2M8 8a2 2 0 1 0 0 4 2 2 0 1 0 0-4"></path><path d="M17 4H7C4.24 4 2 6.24 2 9v7.88a3.124 3.124 0 0 0 5.33 2.21l1.96-1.96c1.45-1.45 3.97-1.45 5.41 0l1.96 1.96c.59.59 1.37.91 2.21.91 1.72 0 3.12-1.4 3.12-3.12V9c0-2.76-2.24-5-5-5Zm3 12.88a1.118 1.118 0 0 1-1.91.79l-1.96-1.96c-1.1-1.1-2.56-1.71-4.12-1.71s-3.02.61-4.12 1.71l-1.96 1.96a1.118 1.118 0 0 1-1.91-.79V9c0-1.65 1.35-3 3-3h10c1.65 0 3 1.35 3 3v7.88Z"></path></svg>`,
+            "book": `<svg class="defaultPoster" viewBox="0 0 24 24"><path d="M8 6h9v2H8z"></path><path d="M20 2H6C4.35 2 3 3.35 3 5v14c0 1.65 1.35 3 3 3h15v-2H6c-.55 0-1-.45-1-1s.45-1 1-1h14c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1m-6 14H6c-.35 0-.69.07-1 .18V5c0-.55.45-1 1-1h13v12z"></path></svg>`,
+            "picture": `<svg class="defaultPoster" viewBox="0 0 24 24"><path d="M12 12 11 11 9 14 19 14 15 8 12 12z"></path><path d="m20,2h-12c-1.1,0-2,.9-2,2v12c0,1.1.9,2,2,2h12c1.1,0,2-.9,2-2V4c0-1.1-.9-2-2-2Zm-12,14V4h12v12s-12,0-12,0Z"></path><path d="m4,8h-2v12c0,1.1.9,2,2,2h12v-2H4v-12Z"></path></svg>`,
+            "music": `<svg class="defaultPoster" viewBox="0 0 24 24"><path d="M3 11h12v2H3zM3 6h12v2H3zM3 16h9v2H3zM17 7v8.05a2.5 2.5 0 1 0-.5 4.95 2.5 2.5 0 0 0 2.5-2.5V8h2V6h-3c-.55 0-1 .45-1 1"></path></svg>`,
+            "film": `<svg class="defaultPoster" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 4h-2V5h2zM7 11H5V9h2zm0 2v2H5v-2zm2 0h6v6H9zm0-2V5h6v6zm8 2h2v2h-2zm0-2V9h2v2zM7 5v2H5V5zM5 17h2v2H5zm12 2v-2h2v2z"></path></svg>`
+        })[providers[stashProviderID].defaultPosterType] || posterType['tv']; // tv is always default
+
         // empty the "Searching..." text and shove in all the search results
         emptyMessage.style.display = "none";
         resultsContainer.innerHTML = "";
         results.forEach(result => {
-            let defaultPoster = `<svg class="defaultPoster" width="24" height="24" viewBox="0 0 24 24">
-            <path d="M20 6h-5.59l2.29-2.29-1.41-1.41L12 5.59 8.71 2.3 7.3 3.71 9.59 6H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2M4 19V8h16v11z"></path>
-            </svg>`;
 
             let posterHTML = result.poster ? `<img src="/proxy?url=${encodeURIComponent(result.poster)}">` : defaultPoster;
 
@@ -340,24 +348,56 @@ function setupShortcuts() {
 }
 //#endregion
 
+// async function getProviders() {
+//     let providerResponse = await fetch('/providers');
+//     let providers = await providerResponse.json();
+//     let providerPicker = document.getElementById('providerPicker');
+
+//     for (let index = 0; index < providers.length; index++) {
+//         let provider = providers[index];
+
+//         let button = document.createElement('div');
+//         button.classList.add('provider');
+//         button.innerHTML = `<img src="/icons/${provider.icon}"><p>${provider.name}</p>`;
+//         button.addEventListener('click', () => { pickProvider(index) });
+
+//         providerPicker.appendChild(button);
+//     }
+
+//     return providers;
+// }
+
 async function getProviders() {
-    let providerResponse = await fetch('/providers');
-    let providers = await providerResponse.json();
+    let response = await fetch('/providers');
+    let providers = await response.json();
     let providerPicker = document.getElementById('providerPicker');
 
-    for (let index = 0; index < providers.length; index++) {
-        let provider = providers[index];
+    let sortedProviders = {};
+    providers.forEach(provider => {
+        let category = provider.category || 'Unsorted';
+        if (!sortedProviders[category]) sortedProviders[category] = [];
+        sortedProviders[category].push(provider);
+    });
 
-        let button = document.createElement('div');
-        button.classList.add('provider');
-        button.innerHTML = `<img src="/icons/${provider.icon}"><p>${provider.name}</p>`;
-        button.addEventListener('click', () => { pickProvider(index) });
+    // https://stackoverflow.com/questions/8763125/get-array-of-objects-keys
+    Object.keys(sortedProviders).forEach(category => {
+        let h2 = document.createElement('h2');
+        h2.textContent = category;
+        providerPicker.appendChild(h2);
 
-        providerPicker.appendChild(button);
-    }
+        // can't just use category anymore because of the Object.keys
+        sortedProviders[category].forEach(provider => {
+            let button = document.createElement('div');
+            button.classList.add('provider');
+            button.innerHTML = `<img src="/icons/${provider.icon}"><p>${provider.name}</p>`;
+            button.addEventListener('click', () => pickProvider(provider.id));
+            providerPicker.appendChild(button);
+        });
+    });
 
     return providers;
 }
+
 
 async function pickProvider(id) {
     document.getElementById('currentProviderIcon').src = `/icons/${providers[id].icon}`;

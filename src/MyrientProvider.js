@@ -15,6 +15,7 @@ export default class MyrientProvider extends Provider {
         this.hideBrowser = true;
         this.headlessBrowser = false;
         this.selectorTimeout = 10000;
+        this.defaultPosterType = 'controller';
     }
 
     async search(query) {

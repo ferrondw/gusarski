@@ -6,6 +6,7 @@ export default class SwitchProvider extends RomsLabProvider {
         this.name = 'Switch (RomsLab)';
         this.id = 'switch';
         this.icon = 'switch.png';
+        this.category = 'Nintendo ROMs';
         this.searchPlaceholder = 'Search Switch games...';
         this.titleReplaceRegex = /^(.*?)(?:\s+SWITCH\s+(?:NSP\+?|XCI\+?)\s+FREE\s+DOWNLOAD)$/i;
         this.titleExcludeRegex = /PS5\s+FREE\s+DOWNLOAD$/i;

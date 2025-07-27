@@ -6,6 +6,7 @@ export default class PS1Provider extends MyrientProvider {
         this.name = 'PS2 (Redump) (Myrient)';
         this.id = 'ps2';
         this.icon = 'playstation.png';
+        this.category = 'Playstation ROMs';
         this.searchPlaceholder = 'Search PS2 games...';
         this.baseURL = 'https://myrient.erista.me/files/Redump/Sony%20-%20PlayStation%202/';
     }

@@ -11,6 +11,7 @@ export default class RomsLabProvider extends Provider {
         this.hideBrowser = false;
         this.headlessBrowser = false;
         this.selectorTimeout = 10000;
+        this.defaultPosterType = 'controller';
     }
 
     async search(query) {
