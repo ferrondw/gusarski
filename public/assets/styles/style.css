@@ -217,7 +217,7 @@ main {
         gap: 10px;
         overflow: auto;
 
-        h2{
+        h2 {
             margin: 5px -10px -10px -10px;
             color: var(--text-semi);
         }
@@ -527,7 +527,7 @@ main {
                 border-radius: var(--border-radius-inner);
                 top: 10px;
                 right: 10px;
-                width:  35px;
+                width: 35px;
                 height: 35px;
                 padding: 5px;
             }
@@ -1040,6 +1040,53 @@ main {
                     width: 20px;
                     height: 20px;
                     transform: translateY(1px);
+                }
+            }
+        }
+    }
+
+    .modalBody {
+        margin-top: 20px;
+        max-height: 60%;
+        overflow-y: auto;
+
+        &#themesModalBody {
+            max-height: 400px !important;
+            overflow: scroll;
+        }
+
+        .themePreview {
+            width: 95% !important;
+            padding: 10px;
+
+            h2 {
+                color: var(--text);
+                font-size: 16px;
+            }
+
+            p {
+                color: var(--text-semi);
+                font-size: 12px;
+            }
+
+            button {
+                display: flex;
+                align-content: center;
+                justify-content: center;
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                right: 10px;
+
+                &:hover {
+                    background: var(--element-background-hover);
+                    border-color: var(--element-border-hover);
+                }
+
+                svg {
+                    width: 100%;
+                    height: 100%;
+                    fill: var(--text);
                 }
             }
         }
