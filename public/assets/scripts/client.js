@@ -348,24 +348,24 @@ function setupShortcuts() {
 }
 //#endregion
 
-// async function getProviders() {
-//     let providerResponse = await fetch('/providers');
-//     let providers = await providerResponse.json();
-//     let providerPicker = document.getElementById('providerPicker');
+async function getProviders() {
+    let providerResponse = await fetch('/providers');
+    let providers = await providerResponse.json();
+    let providerPicker = document.getElementById('providerPicker');
 
-//     for (let index = 0; index < providers.length; index++) {
-//         let provider = providers[index];
+    for (let index = 0; index < providers.length; index++) {
+        let provider = providers[index];
 
-//         let button = document.createElement('div');
-//         button.classList.add('provider');
-//         button.innerHTML = `<img src="/icons/${provider.icon}"><p>${provider.name}</p>`;
-//         button.addEventListener('click', () => { pickProvider(index) });
+        let button = document.createElement('div');
+        button.classList.add('provider');
+        button.innerHTML = `<img src="/icons/${provider.icon}"><p>${provider.name}</p>`;
+        button.addEventListener('click', () => { pickProvider(index) });
 
-//         providerPicker.appendChild(button);
-//     }
+        providerPicker.appendChild(button);
+    }
 
-//     return providers;
-// }
+    return providers;
+}
 
 async function getProviders() {
     let response = await fetch('/providers');
