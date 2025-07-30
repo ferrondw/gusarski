@@ -349,35 +349,18 @@ function setupShortcuts() {
 //#endregion
 
 async function getProviders() {
-    let providerResponse = await fetch('/providers');
-    let providers = await providerResponse.json();
-    let providerPicker = document.getElementById('providerPicker');
-
-    for (let index = 0; index < providers.length; index++) {
-        let provider = providers[index];
-
-        let button = document.createElement('div');
-        button.classList.add('provider');
-        button.innerHTML = `<img src="/icons/${provider.icon}"><p>${provider.name}</p>`;
-        button.addEventListener('click', () => { pickProvider(index) });
-
-        providerPicker.appendChild(button);
-    }
-
-    return providers;
-}
-
-async function getProviders() {
     let response = await fetch('/providers');
     let providers = await response.json();
     let providerPicker = document.getElementById('providerPicker');
 
     let sortedProviders = {};
-    providers.forEach(provider => {
+
+    for (let index = 0; index < providers.length; index++) {
+        let provider = providers[index];
         let category = provider.category || 'Unsorted';
         if (!sortedProviders[category]) sortedProviders[category] = [];
-        sortedProviders[category].push(provider);
-    });
+        sortedProviders[category].push({provider, index});
+    }
 
     // https://stackoverflow.com/questions/8763125/get-array-of-objects-keys
     Object.keys(sortedProviders).forEach(category => {
@@ -386,11 +369,11 @@ async function getProviders() {
         providerPicker.appendChild(h2);
 
         // can't just use category anymore because of the Object.keys
-        sortedProviders[category].forEach(provider => {
+        sortedProviders[category].forEach(({ provider, index }) => {
             let button = document.createElement('div');
             button.classList.add('provider');
             button.innerHTML = `<img src="/icons/${provider.icon}"><p>${provider.name}</p>`;
-            button.addEventListener('click', () => pickProvider(provider.id));
+            button.addEventListener('click', () => pickProvider(index));
             providerPicker.appendChild(button);
         });
     });
