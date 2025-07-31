@@ -1,8 +1,8 @@
 import { fileURLToPath, pathToFileURL } from 'url';
 import { WebSocket, WebSocketServer } from 'ws';
+import { Logger } from './src/utils/Logger.js';
 import session from 'express-session';
 import bodyParser from 'body-parser';
-import { Logger } from './src/utils/Logger.js';
 import { readdirSync } from 'fs';
 import express from 'express';
 import dotenv from 'dotenv';
@@ -24,7 +24,7 @@ const useAuthentication = Boolean(process.env.AUTH_USERNAME && process.env.AUTH_
 
 if (useAuthentication) {
     app.use(session({
-        secret: process.env.SESSION_SECRET || '+W2M}M`DhHKT>`i24f9$',
+        secret: process.env.SESSION_SECRET || 'secret',
         resave: false,
         saveUninitialized: false,
         cookie: {
@@ -34,7 +34,7 @@ if (useAuthentication) {
 }
 //#endregion
 
-//#region Auth Routes & Middleware
+//#region Authentication
 if (useAuthentication) {
     app.get('/auth', (req, res) => {
         if (req.session.loggedIn) {
@@ -67,7 +67,7 @@ if (useAuthentication) {
 }
 //#endregion
 
-//#region Static Assets & Providers Icons
+//#region Statics
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/icons', express.static(path.join(__dirname, 'src', 'providers', 'icons')));
 app.use(express.json());

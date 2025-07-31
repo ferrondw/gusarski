@@ -116,10 +116,10 @@ main {
     min-height: 100dvh;
 
     .searchArea {
-        margin-top: 14px;
+        top: 14px;
         width: 350px;
         height: 52px;
-        position: relative;
+        position: sticky;
         z-index: 2;
         position: sticky;
         display: flex;
@@ -336,6 +336,7 @@ main {
                     fill: var(--text-semi);
                     align-self: center;
                     justify-self: center;
+                    margin-bottom: 100px;
                 }
 
                 .overlay {
@@ -610,7 +611,7 @@ main {
 }
 
 #modalContainer {
-    position: absolute;
+    position: fixed;
     z-index: 1000;
     top: 0px;
     left: 0px;
@@ -691,7 +692,7 @@ main {
 
         .modalBody {
             margin-top: 20px;
-            max-height: 100%;
+            max-height: 90%;
             overflow-y: auto;
 
             &#themesModalBody {
@@ -699,11 +700,12 @@ main {
                 flex-direction: row;
                 flex-wrap: wrap;
                 gap: 20px;
+                height: 450px !important;
             }
 
             .themePreview {
                 padding: 10px;
-                width: 250px;
+                width: 100%;
                 border-radius: var(--border-radius-outer);
                 background: var(--sidebar-background);
                 border: var(--element-border);
@@ -720,7 +722,7 @@ main {
                     color: var(--text-semi);
                 }
 
-                button {
+                button { /* need to switch to flex alignment like the searchbar */
                     background: var(--element-background);
                     border: var(--element-border);
                     color: var(--text);
@@ -731,6 +733,9 @@ main {
                     display: flex;
                     align-content: center;
                     justify-content: center;
+                    position: absolute;
+                    top: 20%;
+                    right: 10px;
 
                     &:hover {
                         background: var(--element-background-hover);
@@ -889,7 +894,7 @@ main {
 
     main {
         .searchArea {
-            margin-top: 7.5px;
+            top: 7.5px;
             height: 45px;
             width: calc(100% - 140px);
 
@@ -954,6 +959,7 @@ main {
 
                     .defaultPoster {
                         width: 40%;
+                        margin-bottom: 0px;
                     }
 
                     .overlay {
@@ -970,6 +976,8 @@ main {
                         display: flex;
                         flex-direction: column;
                         justify-content: space-between;
+                        overflow: scroll;
+                        word-wrap: break-word;
 
                         .title {
                             font-size: 14px;
@@ -1056,40 +1064,21 @@ main {
         }
 
         .themePreview {
-            width: 95% !important;
             padding: 10px;
 
             h2 {
-                color: var(--text);
                 font-size: 16px;
             }
 
             p {
-                color: var(--text-semi);
                 font-size: 12px;
             }
 
-            button {
-                display: flex;
-                align-content: center;
-                justify-content: center;
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                right: 10px;
-
-                &:hover {
-                    background: var(--element-background-hover);
-                    border-color: var(--element-border-hover);
-                }
-
-                svg {
-                    width: 100%;
-                    height: 100%;
-                    fill: var(--text);
-                }
+            button{
+                top: 12.5% !important;
             }
         }
+
     }
 
     #toastContainer {

@@ -1,5 +1,15 @@
-const themes = ['dark', 'amoled', 'dingendingen', 'grounded', 'water', 'fire', 'grass', 'light'];
-var currentThemeIndex = parseInt(localStorage.getItem('themeIndex'), 10) || 0;
+const themes = {
+    'dark': "Dark (Default)",
+    'amoled': 'AMOLED',
+    'dingendingen': 'DINGENDINGEN',
+    'grounded': 'Grounded',
+    'water': 'Water',
+    'fire': 'Fire',
+    'grass': 'Grass',
+    'gold': 'Gold',
+    'light': 'Light',
+}
+var currentTheme = localStorage.getItem('themeKey') || 'dark';
 
 var socketReconnectInterval = null;
 var socket;
@@ -389,28 +399,28 @@ async function pickProvider(id) {
     currentProviderID = id;
 }
 
-function setTheme(index) {
-    currentThemeIndex = index;
+function setTheme(key) {
+    currentTheme = key;
     refreshTheme();
 }
 
 function refreshTheme() {
-    document.documentElement.className = themes[currentThemeIndex];
-    localStorage.setItem('themeIndex', currentThemeIndex);
+    document.documentElement.className = currentTheme || localStorage.getItem('themeKey');
+    localStorage.setItem('themeKey', currentTheme);
 }
 
 function setupThemePicker() {
     let themesModalBody = document.getElementById('themesModalBody');
 
-    for (let theme of themes) {
+    for (let key in themes) {
         let div = document.createElement('div');
-        div.classList.add('themePreview', theme);
-        div.innerHTML = `<h2>${theme}</h2>
+        div.classList.add('themePreview', key);
+        div.innerHTML = `<h2>${themes[key]}</h2>
                          <p>Small text</p>`;
         let useButton = document.createElement('button');
         useButton.innerText = 'Use Theme';
         useButton.addEventListener('click', () => {
-            setTheme(themes.indexOf(theme));
+            setTheme(key);
         });
         div.appendChild(useButton);
         themesModalBody.appendChild(div);
