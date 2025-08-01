@@ -722,7 +722,8 @@ main {
                     color: var(--text-semi);
                 }
 
-                button { /* need to switch to flex alignment like the searchbar */
+                button {
+                    /* need to switch to flex alignment like the searchbar */
                     background: var(--element-background);
                     border: var(--element-border);
                     color: var(--text);
@@ -1074,7 +1075,7 @@ main {
                 font-size: 12px;
             }
 
-            button{
+            button {
                 top: 12.5% !important;
             }
         }

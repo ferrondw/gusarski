@@ -14,7 +14,7 @@ var currentTheme = localStorage.getItem('themeKey') || 'dark';
 var socketReconnectInterval = null;
 var socket;
 
-var currentProviderID = 0;
+var currentProviderID = localStorage.getItem('providerID') || 0;
 var providers;
 
 const shortcuts = [
@@ -65,7 +65,7 @@ const shortcuts = [
 document.addEventListener('DOMContentLoaded', async () => {
     providers = await getProviders();
     setupWebSocket();
-    pickProvider(0);
+    pickProvider(currentProviderID || 0);
     setupThemePicker();
     refreshTheme();
     setupShortcuts();
@@ -397,6 +397,7 @@ async function pickProvider(id) {
     document.getElementById('providerPicker').classList.remove('open');
     document.getElementById('searchQuery').placeholder = providers[id].searchPlaceholder || 'Search...'
     currentProviderID = id;
+    localStorage.setItem('providerID', id);
 }
 
 function setTheme(key) {
