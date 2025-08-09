@@ -38,7 +38,7 @@
     --transition-main: margin-right 0.3s ease;
 
     --toast-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    --toast-animation: slideIn 2s ease;
+    --toast-animation: slideIn 4s ease;
 
     --ws-connected: #0000;
     --ws-disconnected: #c41b1b;
@@ -84,7 +84,6 @@
     --transition-main: margin-right 0.3s ease;
 
     --toast-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    --toast-animation: slideIn 2s ease;
 }
 
 .dingendingen {
@@ -179,7 +178,6 @@
     --transition-main: margin-right 0.3s ease;
 
     --toast-shadow: 0 10px 30px rgba(0, 16, 20, 0.5);
-    --toast-animation: slideIn 2s ease;
 }
 
 .fire {
@@ -221,7 +219,6 @@
     --transition-main: margin-right 0.3s ease;
 
     --toast-shadow: 0 10px 30px rgba(10, 0, 0, 0.5);
-    --toast-animation: slideIn 2s ease;
 }
 
 
@@ -265,7 +262,6 @@
     --transition-main: margin-right 0.3s ease;
 
     --toast-shadow: 0 10px 30px rgba(10, 16, 10, 0.5);
-    --toast-animation: slideIn 2s ease;
 }
 
 .light {
@@ -337,5 +333,4 @@
     --transition-main: margin-right 0.3s ease;
 
     --toast-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    --toast-animation: slideIn 2s ease;
 }

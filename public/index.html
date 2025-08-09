@@ -7,6 +7,7 @@
         <link rel="shortcut icon" href="assets/images/favicon.png" type="image/png">
         <link rel="stylesheet" href="assets/styles/style.css">
         <link rel="stylesheet" href="assets/styles/themes.css">
+        <script type="module" src="assets/scripts/notification.js"></script>
         <script type="module" src="assets/scripts/client.js"></script>
     </head>
     <body>
@@ -24,22 +25,13 @@
             </div>
             <div id="queueList"></div>
             <div id="settings">
-                <button id="themesButton">
-                    <svg viewBox="0 0 24 24">
-                        <rect width="24" height="24" opacity="0"/>
-                        <path d="M19.54 5.08A10.61 10.61 0 0 0 11.91 2a10 10 0 0 0-.05 20 2.58 2.58 0 0 0 2.53-1.89 2.52 2.52 0 0 0-.57-2.28.5.5 0 0 1 .37-.83h1.65A6.15 6.15 0 0 0 22 11.33a8.48 8.48 0 0 0-2.46-6.25zM15.88 15h-1.65a2.49 2.49 0 0 0-1.87 4.15.49.49 0 0 1 .12.49c-.05.21-.28.34-.59.36a8 8 0 0 1-7.82-9.11A8.1 8.1 0 0 1 11.92 4H12a8.47 8.47 0 0 1 6.1 2.48 6.5 6.5 0 0 1 1.9 4.77A4.17 4.17 0 0 1 15.88 15z"/>
-                        <circle cx="12" cy="6.5" r="1.5"/>
-                        <path d="M15.25 7.2a1.5 1.5 0 1 0 2.05.55 1.5 1.5 0 0 0-2.05-.55z"/>
-                        <path d="M8.75 7.2a1.5 1.5 0 1 0 .55 2.05 1.5 1.5 0 0 0-.55-2.05z"/>
-                        <path d="M6.16 11.26a1.5 1.5 0 1 0 2.08.4 1.49 1.49 0 0 0-2.08-.4z"/>
-                    </svg>
-                </button>
-                <button id="downloadsButton" disabled>
+                <button id="downloadsButton" onclick="openModal('downloadsModal')" disabled>
                     <svg viewBox="0 0 24 24">
                         <path d="m20,4h-8.59l-1.41-1.41c-.38-.38-.88-.59-1.41-.59h-4.59c-1.1,0-2,.9-2,2v14c0,1.1.9,2,2,2h16c1.1,0,2-.9,2-2V6c0-1.1-.9-2-2-2Zm0,14H4s0-12,0-12h16v12Z"></path>
+                        <path d="M11 8 11 12 8 12 12 16 16 12 13 12 13 8 11 8z"></path>
                     </svg>
                 </button>
-                <button id="shortcutsButton">
+                <button id="shortcutsButton" onclick="openModal('shortcutsModal')">
                     <svg viewBox="0 0 24 24">
                         <path d="m21,4H3c-1.1,0-2,.9-2,2v12c0,1.1.9,2,2,2h18c1.1,0,2-.9,2-2V6c0-1.1-.9-2-2-2ZM3,18V6h18v12s-18,0-18,0Z"></path>
                         <path d="M5 8H7V10H5z"></path>
@@ -53,6 +45,22 @@
                         <path d="M11 11H13V13H11z"></path>
                         <path d="M14 11H16V13H14z"></path>
                         <path d="M17 11H19V13H17z"></path>
+                    </svg>
+                </button>
+                <button id="themesButton" onclick="openModal('themesModal')">
+                    <svg viewBox="0 0 24 24">
+                        <rect width="24" height="24" opacity="0"/>
+                        <path d="M19.54 5.08A10.61 10.61 0 0 0 11.91 2a10 10 0 0 0-.05 20 2.58 2.58 0 0 0 2.53-1.89 2.52 2.52 0 0 0-.57-2.28.5.5 0 0 1 .37-.83h1.65A6.15 6.15 0 0 0 22 11.33a8.48 8.48 0 0 0-2.46-6.25zM15.88 15h-1.65a2.49 2.49 0 0 0-1.87 4.15.49.49 0 0 1 .12.49c-.05.21-.28.34-.59.36a8 8 0 0 1-7.82-9.11A8.1 8.1 0 0 1 11.92 4H12a8.47 8.47 0 0 1 6.1 2.48 6.5 6.5 0 0 1 1.9 4.77A4.17 4.17 0 0 1 15.88 15z"/>
+                        <circle cx="12" cy="6.5" r="1.5"/>
+                        <path d="M15.25 7.2a1.5 1.5 0 1 0 2.05.55 1.5 1.5 0 0 0-2.05-.55z"/>
+                        <path d="M8.75 7.2a1.5 1.5 0 1 0 .55 2.05 1.5 1.5 0 0 0-.55-2.05z"/>
+                        <path d="M6.16 11.26a1.5 1.5 0 1 0 2.08.4 1.49 1.49 0 0 0-2.08-.4z"/>
+                    </svg>
+                </button>
+                <button id="settingsButton" onclick="openModal('settingsModal')">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4m0 6c-1.08 0-2-.92-2-2s.92-2 2-2 2 .92 2 2-.92 2-2 2"></path>
+                        <path d="m20.42 13.4-.51-.29c.05-.37.08-.74.08-1.11s-.03-.74-.08-1.11l.51-.29c.96-.55 1.28-1.78.73-2.73l-1-1.73a2.006 2.006 0 0 0-2.73-.73l-.53.31c-.58-.46-1.22-.83-1.9-1.11v-.6c0-1.1-.9-2-2-2h-2c-1.1 0-2 .9-2 2v.6c-.67.28-1.31.66-1.9 1.11l-.53-.31c-.96-.55-2.18-.22-2.73.73l-1 1.73c-.55.96-.22 2.18.73 2.73l.51.29c-.05.37-.08.74-.08 1.11s.03.74.08 1.11l-.51.29c-.96.55-1.28 1.78-.73 2.73l1 1.73c.55.95 1.77 1.28 2.73.73l.53-.31c.58.46 1.22.83 1.9 1.11v.6c0 1.1.9 2 2 2h2c1.1 0 2-.9 2-2v-.6a8.7 8.7 0 0 0 1.9-1.11l.53.31c.95.55 2.18.22 2.73-.73l1-1.73c.55-.96.22-2.18-.73-2.73m-2.59-2.78c.11.45.17.92.17 1.38s-.06.92-.17 1.38a1 1 0 0 0 .47 1.11l1.12.65-1 1.73-1.14-.66c-.38-.22-.87-.16-1.19.14-.68.65-1.51 1.13-2.38 1.4-.42.13-.71.52-.71.96v1.3h-2v-1.3c0-.44-.29-.83-.71-.96-.88-.27-1.7-.75-2.38-1.4a1.01 1.01 0 0 0-1.19-.15l-1.14.66-1-1.73 1.12-.65c.39-.22.58-.68.47-1.11-.11-.45-.17-.92-.17-1.38s.06-.93.17-1.38A1 1 0 0 0 5.7 9.5l-1.12-.65 1-1.73 1.14.66c.38.22.87.16 1.19-.14.68-.65 1.51-1.13 2.38-1.4.42-.13.71-.52.71-.96v-1.3h2v1.3c0 .44.29.83.71.96.88.27 1.7.75 2.38 1.4.32.31.81.36 1.19.14l1.14-.66 1 1.73-1.12.65c-.39.22-.58.68-.47 1.11Z"></path>
                     </svg>
                 </button>
             </div>
@@ -84,7 +92,7 @@
             </div>
         </main>
         <div id="modalContainer">
-            <div class="modalContent" id="shortcutModal">
+            <div class="modalContent" id="shortcutsModal">
                 <div class="modalHeader">
                     <h2>Keyboard Shortcuts</h2>
                     <button class="closeModalButton">
@@ -107,6 +115,24 @@
                     </button>
                 </div>
                 <div class="modalBody" id="themesModalBody"></div>
+            </div>
+            <div class="modalContent" id="settingsModal">
+                <div class="modalHeader">
+                    <h2>Settings</h2>
+                    <button class="closeModalButton">
+                        <svg viewBox="4.11366 5.91366 8.759 8.758">
+                            <path d="m9.613 10.293 3.032-3.033a.792.792 0 00-1.12-1.12l-3.031 3.033-3.034-3.033a.792.792 0 00-1.12 1.12l3.034 3.033-3.033 3.033a.792.792 0 001.12 1.119l3.032-3.033 3.033 3.033a.792.792 0 001.12-1.12z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="modalBody">
+                    <label for="notificationTypeSelect">Notification Type:</label>
+                    <select id="notificationTypeSelect" onchange="localStorage.setItem('notificationType', this.value)">
+                        <option value="toast">Toast</option>
+                        <option value="notification">Notification</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
             </div>
         </div>
         <div id="toastContainer"></div>

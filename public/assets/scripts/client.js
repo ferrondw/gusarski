@@ -17,6 +17,8 @@ var socket;
 var currentProviderID = localStorage.getItem('providerID') || 0;
 var providers;
 
+var downloadedItems = [];
+
 const shortcuts = [
     {
         name: 'Previous Provider',
@@ -72,14 +74,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('providerButton').addEventListener('click', () => {
         document.getElementById('providerPicker').classList.toggle('open');
-    });
-
-    document.getElementById('themesButton').addEventListener('click', () => {
-        openModal('themesModal');
-    });
-
-    document.getElementById('shortcutsButton').addEventListener('click', () => {
-        openModal('shortcutModal');
     });
 
     document.querySelectorAll('.closeModalButton').forEach(modal => {
@@ -160,6 +154,7 @@ async function search(overwriteQuery) {
             </button>`;
             resultsContainer.appendChild(card);
         });
+        highlightCompleted();
     } catch (err) {
         emptyMessage.style.display = "flex";
         emptyMessage.innerText = "Error fetching results";
@@ -168,7 +163,7 @@ async function search(overwriteQuery) {
 
 function addToQueue(data, providerID) {
     socket.send(JSON.stringify({ action: 'add', data, providerID }));
-    showToast(`${data.title} added to queue.`);
+    notification(`${data.title} added to queue.`, 'taskAdded');
 }
 
 function renderQueue(queue) {
@@ -180,14 +175,14 @@ function renderQueue(queue) {
         let lastMessage = task.progressMessages.length ? task.progressMessages[task.progressMessages.length - 1] : "Nothing here yet (；′⌒`)";
         let button;
         if (task.state === 'pending') {
-            button = `<button onclick="forceTask(${task.id})">Force</button>`;
+            button = `<button onclick="taskAction('force', ${task.id})">Force</button>`;
         } else if (task.state === 'downloading') {
             button = ``;
         }
         else if (task.state == 'failed') {
-            button = `<button onclick="retryTask(${task.id})">Retry</button><button onclick="removeTask(${task.id})">Remove</button>`;
+            button = `<button onclick="taskAction('retry', ${task.id})">Retry</button><button onclick="taskAction('remove', ${task.id})">Remove</button>`;
         } else { // probably completed
-            button = `<button onclick="removeTask(${task.id})">Remove</button>`;
+            button = `<button onclick="taskAction('remove', ${task.id})">Remove</button>`;
         }
 
         div.innerHTML = `
@@ -202,25 +197,24 @@ function renderQueue(queue) {
     });
 }
 
-function forceTask(id) {
-    socket.send(JSON.stringify({ action: 'force', id }));
+function highlightCompleted() {
+    document.querySelectorAll('#results .card').forEach(card => {
+        let title = card.querySelector('.title')?.textContent;
+        if (title && downloadedItems.includes(title)) {
+            card.classList.add('completed');
+        }
+    });
 }
 
-function removeTask(id) {
-    socket.send(JSON.stringify({ action: 'remove', id }));
+function taskAction(action, id) {
+    socket.send(JSON.stringify({ action, id }));
 }
 
-function retryTask(id) {
-    socket.send(JSON.stringify({ action: 'retry', id }));
-}
-
-function showToast(message) {
-    let toastContainer = document.getElementById('toastContainer');
-    let toast = document.createElement('div');
-    toast.className = "toast";
-    toast.innerText = message;
-    toastContainer.appendChild(toast);
-    setTimeout(() => toastContainer.removeChild(toast), 2000);
+function taskStateNotification(task) {
+    switch (task.state) {
+        case 'failed': notification(`${task.data.title} | Download Failed`, 'taskFailed'); break;
+        case 'completed': notification(`${task.data.title} | Download Completed`, 'taskCompleted'); break;
+    }
 }
 
 //#region WebSocket
@@ -252,8 +246,18 @@ function setupWebSocket() {
 
     socket.addEventListener('message', event => {
         let data = JSON.parse(event.data);
-        if (data.type === 'queue') {
-            renderQueue(data.queue);
+        switch (data.type) {
+            case 'queue':
+                renderQueue(data.queue);
+                break;
+            case 'downloadedItems':
+                downloadedItems = downloadedItems.concat(data.items).filter((v, i, a) => a.indexOf(v) === i); // honestly no clue but it works
+                highlightCompleted();
+                break;
+            case 'taskState':
+                taskStateNotification(data.task);
+                break;
+            default: break;
         }
     });
 }
@@ -294,6 +298,7 @@ function closeModal() {
     }
 }
 
+//#region Sidebar
 let touchStartX = 0;
 let touchEndX = 0;
 let touchStartY = 0;
@@ -318,6 +323,7 @@ document.addEventListener('touchend', (event) => {
         toggleButton.querySelector('svg').style.transform = 'rotate(180deg)';
     }
 });
+//#endregion
 
 function setupShortcuts() {
     let list = document.getElementById('shortcutList');
@@ -369,7 +375,7 @@ async function getProviders() {
         let provider = providers[index];
         let category = provider.category || 'Unsorted';
         if (!sortedProviders[category]) sortedProviders[category] = [];
-        sortedProviders[category].push({provider, index});
+        sortedProviders[category].push({ provider, index });
     }
 
     // https://stackoverflow.com/questions/8763125/get-array-of-objects-keys
@@ -435,7 +441,4 @@ window.openModal = openModal;
 window.search = search;
 window.addToQueue = addToQueue;
 window.renderQueue = renderQueue;
-window.forceTask = forceTask;
-window.retryTask = retryTask;
-window.removeTask = removeTask;
-window.showToast = showToast;
+window.taskAction = taskAction;

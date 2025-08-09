@@ -3,11 +3,11 @@ import { WebSocket, WebSocketServer } from 'ws';
 import { Logger } from './src/utils/Logger.js';
 import session from 'express-session';
 import bodyParser from 'body-parser';
-import { readdirSync } from 'fs';
 import express from 'express';
 import dotenv from 'dotenv';
 import http from 'http';
 import path from 'path';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -79,7 +79,7 @@ var taskIdCounter = 1;
 
 const providers = await (async () => {
     let providersDir = path.join(__dirname, 'src', 'providers');
-    let filePaths = readdirSync(providersDir).filter(f => f.endsWith('.js'));
+    let filePaths = fs.readdirSync(providersDir).filter(f => f.endsWith('.js'));
 
     let modules = await Promise.all(
         filePaths.map(filePath => import(pathToFileURL(path.join(providersDir, filePath)).href))
@@ -92,7 +92,23 @@ const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
 
 wss.on('connection', ws => {
-    ws.send(JSON.stringify({ type: 'queue', queue: downloadQueue })); // send the newly connected client the queue
+    ws.send(JSON.stringify({ type: 'queue', queue: downloadQueue }));
+
+    let completedFile = path.join(__dirname, 'completed.txt');
+    let items = [];
+    try {
+        let data = fs.readFileSync(completedFile, 'utf-8');
+        items = data.split(/\r?\n/).filter(Boolean);
+    } catch (e) {
+        Logger.error("nah fuk u", e);
+        try {
+            fs.writeFileSync(completedFile, '');
+        } catch (err) {
+            Logger.error('Failed to create completed.txt', err);
+        }
+    }
+    ws.send(JSON.stringify({ type: 'downloadedItems', items }));
+
     ws.on('message', msg => {
         let data;
         try { data = JSON.parse(msg); } catch { return; }
@@ -124,6 +140,22 @@ function broadcastQueue() {
             client.send(payload);
         }
     });
+}
+
+function broadcastTaskStateUpdated(task) {
+    let payload = JSON.stringify({ type: 'taskState', task });
+    wss.clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) client.send(payload);
+    });
+
+    if (task.state === 'completed') {
+        Logger.warning('task completed in broadcast');
+        let name = task.data.title;
+        let msg = JSON.stringify({ type: 'downloadedItems', items: [name] });
+        wss.clients.forEach(client => {
+            if (client.readyState === WebSocket.OPEN) client.send(msg);
+        });
+    }
 }
 
 function addTask(providerID, data) {
@@ -166,8 +198,11 @@ async function download(task) {
     };
 
     providers[task.providerID].download(task)
-        .then(() => {
+        .then(async () => {
             task.state = "completed";
+            fs.appendFile(path.join(__dirname, 'completed.txt'), `${task.data.title}\n`, (err) => {
+                if (err) Logger.error(`Failed to add ${task.data.title} to the completed list`, err);
+            });
         })
         .catch(e => {
             task.state = "failed";
@@ -177,6 +212,7 @@ async function download(task) {
             currentDownloadCount--;
             broadcastQueue();
             moveQueue();
+            broadcastTaskStateUpdated(task);
         });
 }
 //#endregion
