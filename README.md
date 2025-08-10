@@ -14,6 +14,7 @@ No ads, no subscriptions, no hidden fees, no shady redirects, no cloud storage, 
 - Shortcuts, because why not
 - Mobile Support, the site will look good on all your devices
 - Customisation, with 8 themes because just light and dark aren't enough for me
+- Download Tracking, makes sure you don't download something multiple times (Shift left-clicking a search result will toggle its completed mark)
 
 
 ## Requirements

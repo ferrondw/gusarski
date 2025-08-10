@@ -303,7 +303,7 @@ main {
                 max-width: 250px;
                 animation: var(--card-animation);
 
-                &:hover {
+                &:not(.completed):hover {
                     border-color: var(--element-border-hover);
                     scale: 1.007;
 
@@ -326,7 +326,7 @@ main {
                     scale: 0.95 !important;
                     opacity: 0.6 !important;
                     filter: grayscale(0.5) blur(1px);
-                    pointer-events: none;
+                    cursor: default;
                 }
 
                 img {

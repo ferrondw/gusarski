@@ -135,7 +135,19 @@ async function search(overwriteQuery) {
 
             let card = document.createElement('div');
             card.className = "card";
-            card.addEventListener('click', () => addToQueue(result, stashProviderID));
+            card.addEventListener('click', (event) => {
+                if (event.shiftKey) {
+                    socket.send(JSON.stringify({
+                        action: 'toggleComplete',
+                        title: result.title
+                    }));
+                    return;
+                }
+
+                if (!card.classList.contains('completed')) {
+                    addToQueue(result, stashProviderID);
+                }
+            });
             card.innerHTML = `
             ${posterHTML}
             <div class="overlay"></div>
@@ -202,6 +214,8 @@ function highlightCompleted() {
         let title = card.querySelector('.title')?.textContent;
         if (title && downloadedItems.includes(title)) {
             card.classList.add('completed');
+        } else if (card.classList.contains('completed')) {
+            card.classList.remove('completed');
         }
     });
 }
@@ -251,7 +265,7 @@ function setupWebSocket() {
                 renderQueue(data.queue);
                 break;
             case 'downloadedItems':
-                downloadedItems = downloadedItems.concat(data.items).filter((v, i, a) => a.indexOf(v) === i); // honestly no clue but it works
+                downloadedItems = data.items;
                 highlightCompleted();
                 break;
             case 'taskState':

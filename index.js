@@ -100,7 +100,6 @@ wss.on('connection', ws => {
         let data = fs.readFileSync(completedFile, 'utf-8');
         items = data.split(/\r?\n/).filter(Boolean);
     } catch (e) {
-        Logger.error("nah fuk u", e);
         try {
             fs.writeFileSync(completedFile, '');
         } catch (err) {
@@ -117,6 +116,7 @@ wss.on('connection', ws => {
             case 'force': forceTask(data.id); break;
             case 'retry': retryTask(data.id); break;
             case 'remove': downloadQueue = downloadQueue.filter(t => t.id !== data.id); break;
+            case 'toggleComplete': toggleTaskComplete(data); break;
             default: break;
         }
         broadcastQueue();
@@ -185,6 +185,25 @@ function forceTask(id) {
     let task = downloadQueue.find(task => task.id == id);
     download(task);
     return task;
+}
+
+function toggleTaskComplete(data) {
+    let completedFile = path.join(__dirname, 'completed.txt');
+    let items = [];
+    try {
+        items = fs.readFileSync(completedFile, 'utf-8').split(/\r?\n/).filter(Boolean);
+    } catch { }
+    let id = items.indexOf(data.title);
+    if (id === -1) {
+        items.push(data.title);
+    } else {
+        items.splice(id, 1);
+    }
+    fs.writeFileSync(completedFile, items.join('\n') + (items.length ? '\n' : ''));
+    let msgComplete = JSON.stringify({ type: 'downloadedItems', items });
+    wss.clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) client.send(msgComplete);
+    });
 }
 
 async function download(task) {
