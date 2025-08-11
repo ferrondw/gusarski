@@ -175,10 +175,23 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
 
     async prepareDownloadDirectories(data) {
         // try to make a folder: ./downloads/<name> (<year>)/S1/
-        let animeFolderName = `${data.title.replace(/[\/\\:*?"<>|]/g, '')} (${data.year})`;
+        let animeFolderName = `${this.decodeHtmlEntities(data.title.replace(/[\/\\:*?"<>|]/g, ''))} (${data.year})`;
         let seasonDir = path.join(this.basePath, animeFolderName, "S1");
         mkdirp.sync(seasonDir);
         return seasonDir;
+    }
+
+    decodeHtmlEntities(str) { // extra cleanup, otherwise /downloads will not recognise some folders
+        return str.replace(/&(?:amp|lt|gt|quot|#39);/g, (match) => {
+            switch (match) {
+                case '&amp;': return '&';
+                case '&lt;': return '<';
+                case '&gt;': return '>';
+                case '&quot;': return '"';
+                case '&#39;': return "'";
+                default: return match;
+            }
+        });
     }
 
     async processEpisode(page, seasonDir, episodeNumber, addMessage) {

@@ -70,7 +70,50 @@ if (useAuthentication) {
 //#region Statics
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/icons', express.static(path.join(__dirname, 'src', 'providers', 'icons')));
+app.use('/assets', express.static(path.join(__dirname, 'public', 'assets'))); // just so it all works in subfolders too
 app.use(express.json());
+//#endregion
+
+//#region Downloads
+function basicAuth(req, res, next) {
+    if (!useAuthentication) return next();
+    if (req.session?.loggedIn) return next();
+    return res.redirect('/auth');
+}
+
+app.use('/downloads', basicAuth, (req, res, next) => {
+    let relativePath = decodeURIComponent(req.path.replace(/^\/downloads\/?/, ''));
+    let targetPath = path.join(__dirname, 'downloads', relativePath);
+
+    fs.stat(targetPath, (err, stats) => {
+        if (err) return next();
+
+        if (stats.isDirectory()) {
+            fs.readdir(targetPath, { withFileTypes: true }, (err, files) => {
+                if (err) return res.status(500).send('Error reading directory');
+                let html = `<title>Gusarski</title>
+                            <link rel="shortcut icon" href="assets/images/favicon.png" type="image/png">
+                            <link rel="stylesheet" href="/assets/styles/themes.css">
+                            <link rel="stylesheet" href="/assets/styles/downloads.css">
+                            <header><img src="/assets/images/favicon.png"><h1>Gusarski</h1></header><a href="/">Home</a>`;
+
+                let parentUrl = path.posix.join('/downloads', path.dirname(relativePath));
+                html += `<a href="${parentUrl}">Parent Directory</a>`;
+
+                files.forEach(file => {
+                    let slash = file.isDirectory() ? '/' : '';
+                    let urlPath = path.posix.join('/downloads', relativePath, file.name) + slash;
+                    html += `<a href="${encodeURI(urlPath)}">${file.name}${slash}</a>`;
+                });
+                res.send(html);
+            });
+        } else {
+            next();
+        }
+    });
+});
+
+app.use('/downloads', express.static(path.join(__dirname, 'downloads')));
 //#endregion
 
 var downloadQueue = []; // { taskId, providerId, state, progressMessages, data }
