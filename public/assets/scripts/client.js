@@ -43,7 +43,7 @@ const shortcuts = [
     {
         name: 'Open Shortcuts Menu',
         keybind: { ctrl: true, shift: false, alt: false, key: '/' },
-        action: () => openModal('shortcutModal')
+        action: () => openModal('shortcutsModal')
     },
     {
         name: 'Toggle Sidebar',

@@ -49,6 +49,6 @@ PORT=3000
 All variables are optional and the server will still function correctly if there is no `.env` file at all.
 
 ## Disclaimer
-- All downloads will be stored in the server where it is hosted, clients cannot directly obtain downloaded files or delete them
+- All downloads will be stored in the server where it is hosted, clients can only obtain downloaded through the `/downloads` endpoint, clients can only download files, not edit or delete them
 - This project uses webscraping to obtain data from websites, these websites are not intended to be scraped and errors can occur
 - Some providers are really error prone and downloads can fail more often then not, just click the "Retry" button in the sidebar and hope it works
