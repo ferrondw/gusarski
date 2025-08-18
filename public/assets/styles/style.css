@@ -324,9 +324,10 @@ main {
                 flex-direction: column;
                 align-items: center;
                 gap: 10px;
+                padding-bottom: 0px;
                 max-height: 0;
                 overflow: hidden;
-                transition: max-height 300ms ease;
+                transition: var(--transition);
             }
 
             &.open {
@@ -336,6 +337,7 @@ main {
 
                 .providerCategoryBody {
                     max-height: 1000px;
+                    padding-bottom: 10px;
                 }
             }
         }

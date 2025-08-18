@@ -392,7 +392,7 @@ async function getProviders() {
 
     let html = '';
     Object.keys(sortedProviders).forEach(category => {
-        let categoryHtml = `<div class="providerCategory open">
+        let categoryHtml = `<div class="providerCategory">
             <div class="providerCategoryHeader">
                 <h2>${category} <span style="font-size: 12px;">(${sortedProviders[category].length})</span></h2>
                 <div class="categoryToggleButton">
@@ -422,7 +422,7 @@ async function getProviders() {
                 category.classList.toggle('open');
                 let body = category.querySelector('.providerCategoryBody');
                 if (category.classList.contains('open')) {
-                    body.style.maxHeight = body.scrollHeight + 'px';
+                    body.style.maxHeight = `${body.scrollHeight + 20}px`;
                 } else {
                     body.style.maxHeight = 0;
                 }
