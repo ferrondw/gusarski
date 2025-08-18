@@ -56,9 +56,7 @@ const shortcuts = [
         action: () => { // https://stackoverflow.com/questions/2024486/is-there-an-easy-way-to-reload-css-without-reloading-the-page
             let links = document.getElementsByTagName("link");
             for (let cl in links) {
-                let link = links[cl];
-                if (link.rel === "stylesheet")
-                    link.href += "";
+                if (links[cl].rel === "stylesheet") links[cl].href += "";
             }
         }
     }
@@ -402,7 +400,7 @@ async function getProviders() {
         sortedProviders[category].forEach(({ provider, index }) => {
             let button = document.createElement('div');
             button.classList.add('provider');
-            button.innerHTML = `<img src="/icons/${provider.icon}"><p>${provider.name}</p>`;
+            button.innerHTML = `<img src="${provider.icon}"><p>${provider.name}</p>`;
             button.addEventListener('click', () => pickProvider(index));
             providerPicker.appendChild(button);
         });
@@ -413,7 +411,7 @@ async function getProviders() {
 
 
 async function pickProvider(id) {
-    document.getElementById('currentProviderIcon').src = `/icons/${providers[id].icon}`;
+    document.getElementById('currentProviderIcon').src = `${providers[id].icon}`;
     document.getElementById('providerPicker').classList.remove('open');
     document.getElementById('searchQuery').placeholder = providers[id].searchPlaceholder || 'Search...'
     currentProviderID = id;

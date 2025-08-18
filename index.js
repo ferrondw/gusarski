@@ -69,7 +69,6 @@ if (useAuthentication) {
 
 //#region Statics
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/icons', express.static(path.join(__dirname, 'src', 'providers', 'icons')));
 app.use('/assets', express.static(path.join(__dirname, 'public', 'assets'))); // just so it all works in subfolders too
 app.use(express.json());
 //#endregion
@@ -192,7 +191,6 @@ function broadcastTaskStateUpdated(task) {
     });
 
     if (task.state === 'completed') {
-        Logger.warning('task completed in broadcast');
         let name = task.data.title;
         let msg = JSON.stringify({ type: 'downloadedItems', items: [name] });
         wss.clients.forEach(client => {
