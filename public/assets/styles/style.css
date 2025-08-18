@@ -16,6 +16,8 @@
     }
 
     button {
+        box-shadow: var(--element-shadow);
+
         &:hover {
             scale: 1.04;
 
@@ -133,6 +135,7 @@ main {
         gap: 10px;
         padding: 0px 5px 0px 16px;
         backdrop-filter: var(--blur);
+        box-shadow: var(--element-shadow);
 
         &:has(#searchQuery:focus) {
             background: var(--element-background-hover);
@@ -235,6 +238,7 @@ main {
             gap: 10px;
             height: 60px;
             transition: var(--transition);
+            box-shadow: var(--element-shadow);
 
             img {
                 height: 90%;
@@ -490,6 +494,7 @@ main {
         background: var(--sidebar-background);
         z-index: 1;
         flex: 0 0 auto;
+        box-shadow: var(--element-shadow);
 
         h2 {
             font-size: 24px;
@@ -514,6 +519,7 @@ main {
             margin-bottom: 12px;
             transition: var(--transition);
             position: relative;
+            box-shadow: var(--element-shadow);
 
             .queueTitle {
                 font-size: 20px;
@@ -536,6 +542,7 @@ main {
                 background: var(--element-background);
                 border: var(--element-border);
                 border-radius: var(--border-radius-inner);
+                box-shadow: var(--element-shadow);
                 top: 10px;
                 right: 10px;
                 width: 35px;
@@ -584,6 +591,7 @@ main {
         align-items: center;
         justify-content: center;
         gap: 16px;
+        box-shadow: var(--sidebar-inner-shadow);
 
         button {
             background: var(--element-background);

@@ -27,8 +27,10 @@
     --element-border-hover: rgb(14, 165, 233);
     --element-background: rgba(30, 41, 59, 0.6);
     --element-background-hover: rgba(120, 149, 189, 0.2);
+    --element-shadow: 0 5px 5px #0003;
     --sidebar-background: rgba(15, 23, 42, 0.9);
     --sidebar-shadow: -10px 0 20px rgba(0, 0, 0, 0.3);
+    --sidebar-inner-shadow: 0 -5px 5px #0003;
 
     --modal-background: #0009;
 
@@ -286,6 +288,8 @@
     --element-background: rgba(255, 255, 255, 0.8);
     --element-background-hover: rgba(0, 122, 204, 0.05);
     --sidebar-background: rgba(255, 255, 255, 0.9);
+    --element-shadow: 0 5px 5px #0001;
+    --sidebar-inner-shadow: 0 -5px 5px #0001;
     --card-year-text: #94a3b8;
 
     --scrollbar-thumb: #ccd6e0;
