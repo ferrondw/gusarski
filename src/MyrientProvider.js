@@ -1,5 +1,5 @@
 import Provider from './Provider.js';
-import { chromium } from 'playwright';
+import { PlaywrightUtils } from './utils/PlaywrightUtils.js';
 import fs from 'fs';
 import path from 'path';
 import unzipper from 'unzipper';
@@ -21,7 +21,7 @@ export default class MyrientProvider extends Provider {
     async search(query) {
         let browser = null;
         try {
-            browser = await this.newBrowser();
+            browser = await PlaywrightUtils.newBrowser(this.hideBrowser);
             let page = await browser.newPage();
             await page.goto(this.baseURL, { waitUntil: 'networkidle' });
 
@@ -74,7 +74,7 @@ export default class MyrientProvider extends Provider {
     async download(task) {
         let browser = null;
         try {
-            browser = await this.newBrowser();
+            browser = await PlaywrightUtils.newBrowser(this.hideBrowser);
             let page = await browser.newPage();
             await page.goto(this.baseURL, { waitUntil: 'networkidle' });
 
@@ -114,17 +114,5 @@ export default class MyrientProvider extends Provider {
                 Logger.warning("Error while closing the browser: " + e.message);
             }
         }
-    }
-
-    async newBrowser() {
-        return chromium.launch({
-            headless: this.headlessBrowser,
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--lang=en-US',
-                this.hideBrowser ? '--headless=new' : ''
-            ]
-        });
     }
 }

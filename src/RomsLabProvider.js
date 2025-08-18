@@ -1,6 +1,6 @@
 import { Logger } from './utils/Logger.js';
 import Provider from './Provider.js';
-import { chromium } from 'playwright';
+import { PlaywrightUtils } from './utils/PlaywrightUtils.js';
 import fs from 'fs';
 import path from 'path';
 import { createExtractorFromFile } from 'node-unrar-js';
@@ -8,7 +8,7 @@ import { createExtractorFromFile } from 'node-unrar-js';
 export default class RomsLabProvider extends Provider {
     constructor() {
         super();
-        this.hideBrowser = false;
+        this.hideBrowser = true;
         this.headlessBrowser = false;
         this.selectorTimeout = 10000;
         this.defaultPosterType = 'controller';
@@ -17,7 +17,7 @@ export default class RomsLabProvider extends Provider {
     async search(query) {
         let browser;
         try {
-            browser = await this.newBrowser();
+            browser = await PlaywrightUtils.newBrowser(this.hideBrowser);
             const page = await browser.newPage();
             await page.goto(
                 `https://romslab.com/?s=${encodeURIComponent(query)}&post_type=post`,
@@ -59,7 +59,7 @@ export default class RomsLabProvider extends Provider {
     async download(task) {
         let browser;
         try {
-            browser = await this.newBrowser();
+            browser = await PlaywrightUtils.newBrowser(this.hideBrowser);
             const context = await browser.newContext({ locale: 'en-US' });
             const page = await context.newPage();
             const { href, title } = task.data;
@@ -91,18 +91,6 @@ export default class RomsLabProvider extends Provider {
         } finally {
             if (browser) await browser.close();
         }
-    }
-
-    async newBrowser() {
-        return chromium.launch({
-            headless: this.headlessBrowser,
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--lang=en-US',
-                this.hideBrowser ? '--headless=new' : ''
-            ].filter(Boolean)
-        });
     }
 
     logDirectoryTree(dir, prefix = '') {

@@ -1,6 +1,6 @@
 import { Logger } from '../utils/Logger.js';
 import Provider from '../Provider.js';
-import { chromium } from 'playwright';
+import { PlaywrightUtils } from '../utils/PlaywrightUtils.js';
 import { mkdirp } from 'mkdirp';
 import path from 'path';
 
@@ -29,7 +29,7 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
     async search(query) { // search can do anything, as long as it returns the required fields + any additional data needed by download
         try {
             let searchUrl = `${this.baseURL}api?m=search&q=${encodeURIComponent(query)}`;
-            let content = await this.headlessFetch(searchUrl, true);
+            let content = await PlaywrightUtils.headlessFetch(searchUrl, true);
 
             if (!content.data) return [];
 
@@ -53,7 +53,7 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
         let browser = null; // create the browser variable so the catch can clean it up, but leave it at null until we are in the try block if something goes wrong in the newBrowser();
 
         try {
-            browser = await this.newBrowser();
+            browser = await PlaywrightUtils.newBrowser(this.hideBrowser);
 
             let seasonDirectory = await this.prepareDownloadDirectories(task.data);
             let episodeLinks = await this.getEpisodeLinks(task);
@@ -96,24 +96,6 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
 
     // ALL the following methods are not needed specifically for any other provider, and are just to help the process for animepahe
 
-    async headlessFetch(url, isJson) {
-        let context = await chromium.launch({
-            headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox', '--lang=en-US']
-        });
-        let page = await context.newPage();
-        await page.goto(url, { waitUntil: 'networkidle' });
-        await page.waitForSelector('#ddg-l10n-title', { state: 'detached', timeout: 10000 }).catch(() => { }); // wait for ddos guard
-        let content = await page.content();
-        await context.close();
-
-        if (isJson) {
-            return this.jsonFromRegex(content, /<pre.*?>([\s\S]*?)<\/pre>/);
-        }
-
-        return content;
-    }
-
     async jsonFromRegex(content, regex) {
         let match = regex.exec(content);
 
@@ -131,7 +113,7 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
         // loading all episodes from all pages
         do {
             let url = `${this.baseURL}api?m=release&id=${task.data.session}&sort=episode_asc&page=${pageNum}`;
-            let resp = await this.headlessFetch(url, true);
+            let resp = await PlaywrightUtils.headlessFetch(url, true);
             resp.data.forEach(ep => { // custom data type with less bloat
                 episodes.push({ session: ep.session, episode: ep.episode, url: `${this.baseURL}play/${task.data.session}/${ep.session}` });
             });
@@ -245,18 +227,6 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
 
         let download = await popup.waitForEvent('download', { timeout: this.downloadStartTimeout });
         return download;
-    }
-
-    async newBrowser() {
-        return chromium.launch({
-            headless: this.headlessBrowser,
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--lang=en-US',
-                this.hideBrowser ? '--headless=new' : ''
-            ]
-        });
     }
 
     async openPopup(page, option, resolution, addMessage) {
