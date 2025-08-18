@@ -208,7 +208,7 @@ main {
         transform: translateX(50%);
         width: 370px;
         height: min-content;
-        max-height: 300px;
+        height: 300px;
         border-radius: 0px 0px var(--border-radius-outer) var(--border-radius-outer);
         background: var(--sidebar-background);
         border: var(--element-border);
@@ -218,7 +218,7 @@ main {
         align-items: center;
         flex-direction: column;
         gap: 10px;
-        overflow: auto;
+        overflow-y: scroll;
 
         h2 {
             margin: 5px -10px -10px -10px;
@@ -230,6 +230,7 @@ main {
             background: var(--element-background);
             border: var(--element-border);
             border-radius: var(--border-radius-inner);
+            color: var(--text);
             padding: 2px;
             padding-left: 5px;
             display: flex;
@@ -254,6 +255,87 @@ main {
 
                 &:active {
                     scale: 0.99;
+                }
+            }
+        }
+
+        .providerCategory {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+
+            .providerCategoryHeader {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+                padding: 2px 10px;
+                user-select: none;
+                cursor: pointer;
+                width: 100%;
+
+                &:hover {
+                    h2 {
+                        color: var(--text);
+                        transition: var(--transition);
+                    }
+
+                    .categoryToggleButton {
+                        svg {
+                            fill: var(--text);
+                            transition: var(--transition);
+                        }
+                    }
+                }
+
+                h2 {
+                    margin: 0;
+                    font-size: 16px;
+                    color: var(--text-semi);
+                    font-weight: 600;
+                    text-align: left;
+                    flex: 1;
+                    transition: var(--transition);
+                }
+
+                .categoryToggleButton {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 24px;
+                    height: 24px;
+
+                    svg {
+                        width: 18px;
+                        height: 18px;
+                        transform-origin: center;
+                        transition: transform 220ms ease;
+                        fill: var(--text-semi);
+                        transition: var(--transition);
+                    }
+                }
+            }
+
+            .providerCategoryBody {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 300ms ease;
+            }
+
+            &.open {
+                .providerCategoryHeader .categoryToggleButton svg {
+                    transform: rotate(180deg);
+                }
+
+                .providerCategoryBody {
+                    max-height: 1000px;
                 }
             }
         }

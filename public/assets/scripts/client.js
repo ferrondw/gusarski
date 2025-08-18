@@ -390,25 +390,47 @@ async function getProviders() {
         sortedProviders[category].push({ provider, index });
     }
 
-    // https://stackoverflow.com/questions/8763125/get-array-of-objects-keys
+    let html = '';
     Object.keys(sortedProviders).forEach(category => {
-        let h2 = document.createElement('h2');
-        h2.textContent = category;
-        providerPicker.appendChild(h2);
+        let categoryHtml = `<div class="providerCategory open">
+            <div class="providerCategoryHeader">
+                <h2>${category} <span style="font-size: 12px;">(${sortedProviders[category].length})</span></h2>
+                <div class="categoryToggleButton">
+                    <svg viewBox="0 0 24 24"><path d="m12 15.41 5.71-5.7-1.42-1.42-4.29 4.3-4.29-4.3-1.42 1.42z"></path></svg>
+                </div>
+            </div>
+            <div class="providerCategoryBody">`;
 
-        // can't just use category anymore because of the Object.keys
         sortedProviders[category].forEach(({ provider, index }) => {
-            let button = document.createElement('div');
-            button.classList.add('provider');
-            button.innerHTML = `<img src="${provider.icon}"><p>${provider.name}</p>`;
-            button.addEventListener('click', () => pickProvider(index));
-            providerPicker.appendChild(button);
+            categoryHtml += `
+                <button class="provider" onclick="pickProvider(${index})">
+                    <img src="${provider.icon}">
+                    <p>${provider.name}</p>
+                </button>`;
         });
+
+        categoryHtml += '</div></div>';
+        html += categoryHtml;
     });
+
+    providerPicker.innerHTML = html;
+
+    document.querySelectorAll('#providerPicker .providerCategoryHeader')
+        .forEach(header => {
+            header.addEventListener('click', () => {
+                let category = header.parentElement;
+                category.classList.toggle('open');
+                let body = category.querySelector('.providerCategoryBody');
+                if (category.classList.contains('open')) {
+                    body.style.maxHeight = body.scrollHeight + 'px';
+                } else {
+                    body.style.maxHeight = 0;
+                }
+            });
+        });
 
     return providers;
 }
-
 
 async function pickProvider(id) {
     document.getElementById('currentProviderIcon').src = `${providers[id].icon}`;
@@ -448,6 +470,7 @@ function setupThemePicker() {
 
 // clean? no. does it work? yes.
 // makes all the methods usable directly in html, need to define this specifically because it is a module
+window.pickProvider = pickProvider;
 window.toggleSidebar = toggleSidebar;
 window.openModal = openModal;
 window.search = search;
