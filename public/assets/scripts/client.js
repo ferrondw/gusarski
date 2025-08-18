@@ -199,7 +199,7 @@ function renderQueue(queue) {
         <h4 class="queueTitle">${task.data.title}</h4>
         <p class="queueStatus">Status: ${task.state}</p>
         <p class="queueUpdate">${lastMessage}</p>
-        <img class="providerIcon" src="/icons/${providers[task.providerID].icon}">
+        <img class="providerIcon" src="${providers[task.providerID].icon}">
         <div class="queueButtons">
         ${button}
         </div>`;
