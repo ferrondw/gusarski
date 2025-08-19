@@ -15,6 +15,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    box-shadow: var(--element-shadow);
 
     h1 {
         margin-bottom: 1rem;
@@ -50,6 +51,7 @@ body {
             transition: var(--transition);
             padding: 0px 5px 0px 16px;
             backdrop-filter: var(--blur);
+            box-shadow: var(--element-shadow);
 
             &:focus {
                 background: var(--element-background-hover);
@@ -66,6 +68,7 @@ body {
             border-radius: var(--border-radius-inner);
             cursor: pointer;
             transition: var(--transition);
+            box-shadow: var(--element-shadow);
 
             &:hover {
                 background: var(--element-background-hover);

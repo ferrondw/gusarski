@@ -292,6 +292,16 @@ app.get('/proxy', async (req, res) => {
 app.get('/providers', async (req, res) => {
     res.json(providers);
 });
+
+
+app.get('/404', (req, res) => {
+    res.sendFile(`${__dirname}/public/404.html`);
+});
+
+// https://stackoverflow.com/questions/78973586/typeerror-invalid-token-at-1-https-git-new-pathtoregexperror
+app.get(/(.*)/, (req, res) => {
+    res.redirect('/404');
+});
 //#endregion
 
 server.listen(PORT, () => {
