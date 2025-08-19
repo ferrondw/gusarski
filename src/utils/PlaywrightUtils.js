@@ -30,4 +30,11 @@ export class PlaywrightUtils {
 
         return content;
     }
+
+    static async jsonFromRegex(content, regex) {
+        let match = regex.exec(content);
+
+        if (!match || !match[1]) throw new Error("No JSON matched in regex");
+        return JSON.parse(match[1]);
+    }
 }

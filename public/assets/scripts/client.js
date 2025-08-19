@@ -7,6 +7,8 @@ const themes = {
     'fire': 'Fire',
     'grass': 'Grass',
     'gold': 'Gold',
+    'pinkpurple': 'Pink & Purple',
+    'blueorange' : 'Blue & Orange',
     'light': 'Light',
 }
 var currentTheme = localStorage.getItem('themeKey') || 'dark';

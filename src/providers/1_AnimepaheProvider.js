@@ -96,13 +96,6 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
 
     // ALL the following methods are not needed specifically for any other provider, and are just to help the process for animepahe
 
-    async jsonFromRegex(content, regex) {
-        let match = regex.exec(content);
-
-        if (!match || !match[1]) throw new Error("No JSON matched in regex");
-        return JSON.parse(match[1]);
-    }
-
     async getEpisodeLinks(task) {
         task.addMessage(`Getting episode links`);
 

@@ -13,7 +13,7 @@ No ads, no subscriptions, no hidden fees, no shady redirects, no cloud storage, 
 - Monitoring, the server has logs from current downloads, and the clients can see and manage current downloads (clients cannot remove files, there are no permanent logs, no log files will be saved to your system, it's purely in the console)
 - Shortcuts, because why not
 - Mobile Support, the site will look good on all your devices
-- Customisation, with 9 themes because just light and dark aren't enough for me
+- Customisation, with 11 themes because just light and dark aren't enough for me
 - Download Tracking, makes sure you don't download something multiple times (Shift left-clicking a search result will toggle its completed mark)
 
 
