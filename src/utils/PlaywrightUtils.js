@@ -3,7 +3,7 @@ import { chromium } from "playwright";
 export class PlaywrightUtils {
     static newBrowser(hideBrowser) {
         return chromium.launch({
-            headless: this.headlessBrowser,
+            headless: false,
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',

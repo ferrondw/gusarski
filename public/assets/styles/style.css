@@ -76,6 +76,7 @@ header {
         backdrop-filter: var(--blur);
         background: var(--element-background);
         border: var(--element-border);
+        box-shadow: var(--element-shadow);
     }
 
     .sidebarToggle {
@@ -152,7 +153,7 @@ main {
             z-index: 2;
             flex: 1 1 auto;
             min-width: 1px;
-            /* none does nothing so 1px it is, otherwise the search will stretch out the provider button and search icon beyond its width*/
+            height: 100%;
         }
 
         #searchQuery::placeholder {
@@ -244,7 +245,6 @@ main {
             img {
                 height: 90%;
                 width: auto;
-                /* filter: drop-shadow(0px 0px 5px #fff9); */
             }
 
             &:hover {
@@ -382,7 +382,6 @@ main {
                 backdrop-filter: var(--blur);
                 transition: var(--transition);
                 cursor: pointer;
-                /* i REALLY want to make sure the cards are not weirdly scaled */
                 min-height: 375px;
                 height: 375px;
                 max-height: 375px;
@@ -478,19 +477,6 @@ main {
                             border-radius: var(--border-radius-inner);
                             font-size: 12px;
                             color: var(--card-amount-text);
-
-                            /* not used but still handy so eh */
-                            &.red {
-                                background: rgba(233, 14, 14, 0.2);
-                                border: 1px solid rgba(233, 14, 14, 0.3);
-                                color: #e90e0e;
-                            }
-
-                            &.yellow {
-                                background: rgba(233, 160, 14, 0.2);
-                                border: 1px solid rgba(233, 175, 14, 0.3);
-                                color: #e9af0e;
-                            }
                         }
                     }
                 }
@@ -533,14 +519,12 @@ main {
             svg {
                 fill: var(--text-semi);
                 scale: 2;
-                /* i thought it was small idk */
             }
         }
     }
 }
 
 #queueSidebar.open~main {
-    /* absolutely no clue why but setting the provider picker margin half that of main works for some reason */
     margin-right: 400px;
 }
 
@@ -1025,7 +1009,6 @@ main {
     }
 
     #queueSidebar.open~main #providerPicker {
-        /* resetting that nasty css here because otherwise the provider picker will be shoved off screen on mobile */
         margin-right: 0px;
     }
 
@@ -1074,7 +1057,6 @@ main {
                 padding-bottom: 40px;
 
                 .card {
-                    /* i REALLY want to make sure the cards are not weirdly scaled */
                     min-height: 150px;
                     height: 150px;
                     max-height: 250px;
