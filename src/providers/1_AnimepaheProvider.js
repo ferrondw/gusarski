@@ -3,6 +3,7 @@ import Provider from '../Provider.js';
 import { PlaywrightUtils } from '../utils/PlaywrightUtils.js';
 import { mkdirp } from 'mkdirp';
 import path from 'path';
+import fs from 'fs';
 
 export default class AnimepaheProvider extends Provider { // kept the 1_ before the file to always give it priority over other providers
     constructor() {
@@ -17,7 +18,7 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
         this.baseURL = 'https://animepahe.ru/';
         this.hideBrowser = false; // hides the headful browser while downloading
         this.headlessBrowser = false; // if the browser should have GUI or run completely in the background
-        this.episodeBatchLimit = 3; // max amount of contexts the browser can start while downloading an anime
+        this.episodeBatchLimit = 2; // max amount of contexts the browser can start while downloading an anime
         this.selectorTimeout = 10000; // how long to wait on an selector (in milliseconds)
         this.downloadStartTimeout = 10000; // tries to restart the download if it doesn't start in X milliseconds
         this.maxDownloadRetries = 5; // how many times it should try to press the download button in the kwik page
@@ -65,7 +66,7 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
                 task.addMessage(`Downloading episodes ${episodeNumbers}`);
 
                 await Promise.all(episodeBatch.map(async ({ episode, url }) => { // Promise.all waits for ALL downloads to finish before starting the next batch
-                    let context = await browser.newContext();
+                    let context = await browser.newContext({ acceptDownloads: true });
                     try {
                         let page = await context.newPage();
                         await page.goto(url, { waitUntil: 'networkidle' });
@@ -200,8 +201,45 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
         }
 
         let destPath = path.join(seasonDir, `S1E${episodeNumber}.mp4`);
-        await episodeDownload.saveAs(destPath);
-        addMessage(`Episode ${episodeNumber} downloaded.`);
+        let tempPath = destPath + ".part";
+
+        let stream = await episodeDownload.createReadStream();
+        if (!stream) {
+            throw new Error("Download stream not available");
+        }
+
+        // check if any bytes are coming in, if not abort after a while
+        let bytes = 0;
+        let lastTick = Date.now();
+        let idleLimit = 5 * 60 * 1000; // 5 minutes
+        let idleTimer = setInterval(() => {
+            if (Date.now() - lastTick > idleLimit) {
+                stream.destroy(new Error("No download progress (idle timeout)"));
+            }
+        }, 30 * 1000);
+
+        await new Promise((resolve, reject) => {
+            let file = fs.createWriteStream(tempPath);
+            stream.on('data', (chunk) => {
+                bytes += chunk.length;
+                lastTick = Date.now();
+            });
+            stream.on('error', (err) => reject(err));
+            file.on('error', (err) => reject(err));
+            file.on('finish', resolve);
+            stream.pipe(file);
+        }).finally(() => clearInterval(idleTimer));
+
+        // Sanity check: if the browser reports a failure after streaming, surface it
+        let failure = await episodeDownload.failure();
+        if (failure) {
+            // Remove partial file and throw to allow upper-level retry attempt
+            try { await fs.promises.unlink(tempPath); } catch { }
+            throw new Error(`Download failed: ${failure}`);
+        }
+
+        await fs.promises.rename(tempPath, destPath);
+        addMessage(`Episode ${episodeNumber} downloaded (${(bytes / 1e6).toFixed(1)} MB).`);
 
         await popup.close();
     }
