@@ -230,16 +230,14 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
             stream.pipe(file);
         }).finally(() => clearInterval(idleTimer));
 
-        // Sanity check: if the browser reports a failure after streaming, surface it
         let failure = await episodeDownload.failure();
         if (failure) {
-            // Remove partial file and throw to allow upper-level retry attempt
             try { await fs.promises.unlink(tempPath); } catch { }
             throw new Error(`Download failed: ${failure}`);
         }
 
         await fs.promises.rename(tempPath, destPath);
-        addMessage(`Episode ${episodeNumber} downloaded (${(bytes / 1e6).toFixed(1)} MB).`);
+        addMessage(`Episode ${episodeNumber} downloaded (${(bytes / 1e6).toFixed(1)} MB)`);
 
         await popup.close();
     }
