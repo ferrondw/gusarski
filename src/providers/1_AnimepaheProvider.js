@@ -15,7 +15,7 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
         this.category = 'Anime';
         this.searchPlaceholder = 'Search anime...';
 
-        this.baseURL = 'https://animepahe.ru/';
+        this.baseURL = 'https://animepahe.si/';
         this.hideBrowser = false; // hides the headful browser while downloading
         this.headlessBrowser = false; // if the browser should have GUI or run completely in the background
         this.episodeBatchLimit = 2; // max amount of contexts the browser can start while downloading an anime
