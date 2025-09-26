@@ -8,7 +8,7 @@ const themes = {
     'grass': 'Grass',
     'gold': 'Gold',
     'pinkpurple': 'Pink & Purple',
-    'blueorange' : 'Blue & Orange',
+    'blueorange': 'Blue & Orange',
     'light': 'Light',
 }
 var currentTheme = localStorage.getItem('themeKey') || 'dark';
@@ -20,6 +20,12 @@ var currentProviderID = localStorage.getItem('providerID') || 0;
 var providers;
 
 var downloadedItems = [];
+
+const svgIcons = {
+    'download': `<svg viewBox="0 0 24 24"><path d="M11 3v7H7l5 6 5-6h-4V3z"></path><path d="M19 19H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2z"></path></svg>`,
+    'close': `<svg viewBox="0 0 24 24"><path d="m7.76 14.83-2.83 2.83 1.41 1.41 2.83-2.83 2.12-2.12.71-.71.71.71 1.41 1.42 3.54 3.53 1.41-1.41-3.53-3.54-1.42-1.41-.71-.71 5.66-5.66-1.41-1.41L12 10.59 6.34 4.93 4.93 6.34 10.59 12l-.71.71z"></path></svg>`,
+    'retry': `<svg style="scale: 0.9;" viewBox="0 0 24 24"><path d="M19.07 4.93c-.45-.45-.95-.86-1.48-1.22a9.6 9.6 0 0 0-1.7-.92c-.6-.25-1.24-.45-1.88-.58-1.32-.27-2.71-.27-4.03 0-.64.13-1.27.33-1.88.58a9.96 9.96 0 0 0-4.4 3.62 9.6 9.6 0 0 0-.92 1.7c-.25.6-.45 1.24-.58 1.88-.13.66-.2 1.34-.2 2.01s.07 1.35.2 2.01c.13.64.33 1.27.58 1.88a9.96 9.96 0 0 0 3.62 4.4c.53.36 1.1.67 1.7.92s1.24.45 1.88.58c.66.13 1.34.2 2.01.2s1.35-.07 2.01-.2c.64-.13 1.27-.33 1.88-.58a9.96 9.96 0 0 0 4.4-3.62c.36-.53.67-1.1.92-1.7s.45-1.24.58-1.88c.13-.66.2-1.34.2-2.01h-2a7.85 7.85 0 0 1-.63 3.11c-.2.48-.45.93-.74 1.36-.28.42-.61.82-.98 1.19-.36.36-.76.69-1.18.98-.43.29-.88.54-1.36.74s-.99.36-1.5.47a8 8 0 0 1-4.73-.47c-.48-.2-.93-.45-1.36-.74-.42-.29-.82-.62-1.18-.98s-.69-.76-.98-1.19a7.8 7.8 0 0 1-.74-1.36c-.2-.48-.36-.99-.47-1.5-.11-.53-.16-1.07-.16-1.61a7.85 7.85 0 0 1 .63-3.11c.2-.48.45-.93.74-1.36.29-.42.62-.82.98-1.18s.76-.69 1.18-.98c.43-.29.88-.54 1.36-.74s.99-.36 1.5-.47a8 8 0 0 1 4.73.47c.48.2.93.45 1.36.74.42.29.82.62 1.18.98.17.17.32.34.48.52L15.98 9h6V3l-2.45 2.45c-.15-.18-.31-.36-.48-.52Z"></path></svg>`,
+}
 
 const shortcuts = [
     {
@@ -100,6 +106,7 @@ async function search(overwriteQuery) {
     let resultsContainer = document.getElementById('results');
     let emptyMessage = document.getElementById('emptyMessage');
     resultsContainer.innerHTML = "";
+    resultsContainer.style.display = "none";
     queryInput.value = "";
     emptyMessage.style.display = "flex";
     emptyMessage.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><style>.spinner_qM83{animation:spinner_8HQG 1.05s infinite}.spinner_oXPr{animation-delay:.1s}.spinner_ZTLf{animation-delay:.2s}@keyframes spinner_8HQG{0%,57.14%{animation-timing-function:cubic-bezier(0.33,.66,.66,1);transform:translate(0)}28.57%{animation-timing-function:cubic-bezier(0.33,0,.66,.33);transform:translateY(-6px)}100%{transform:translate(0)}}</style><circle class="spinner_qM83" cx="4" cy="12" r="3"/><circle class="spinner_qM83 spinner_oXPr" cx="12" cy="12" r="3"/><circle class="spinner_qM83 spinner_ZTLf" cx="20" cy="12" r="3"/></svg>';
@@ -124,11 +131,11 @@ async function search(overwriteQuery) {
             "picture": `<svg class="defaultPoster" viewBox="0 0 24 24"><path d="M12 12 11 11 9 14 19 14 15 8 12 12z"></path><path d="m20,2h-12c-1.1,0-2,.9-2,2v12c0,1.1.9,2,2,2h12c1.1,0,2-.9,2-2V4c0-1.1-.9-2-2-2Zm-12,14V4h12v12s-12,0-12,0Z"></path><path d="m4,8h-2v12c0,1.1.9,2,2,2h12v-2H4v-12Z"></path></svg>`,
             "music": `<svg class="defaultPoster" viewBox="0 0 24 24"><path d="M3 11h12v2H3zM3 6h12v2H3zM3 16h9v2H3zM17 7v8.05a2.5 2.5 0 1 0-.5 4.95 2.5 2.5 0 0 0 2.5-2.5V8h2V6h-3c-.55 0-1 .45-1 1"></path></svg>`,
             "film": `<svg class="defaultPoster" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 4h-2V5h2zM7 11H5V9h2zm0 2v2H5v-2zm2 0h6v6H9zm0-2V5h6v6zm8 2h2v2h-2zm0-2V9h2v2zM7 5v2H5V5zM5 17h2v2H5zm12 2v-2h2v2z"></path></svg>`
-        })[providers[stashProviderID].defaultPosterType] || posterType['tv']; // tv is always default
+        })[providers[stashProviderID].defaultPosterType || 'tv']; // tv is always default
 
         // empty the "Searching..." text and shove in all the search results
         emptyMessage.style.display = "none";
-        resultsContainer.innerHTML = "";
+        resultsContainer.style.display = "flex";
         results.forEach(result => {
 
             let posterHTML = result.poster ? `<img src="/proxy?url=${encodeURIComponent(result.poster)}">` : defaultPoster;
@@ -158,12 +165,7 @@ async function search(overwriteQuery) {
             <span class="year">${result.year || '?'}</span>
             </div>
             </div>
-            <button class="downloadButton" title="Download">
-            <svg viewBox="0 0 24 24" fill="none">
-            <path d="M3 15C3 17.8284 3 19.2426 3.87868 20.1213C4.75736 21 6.17157 21 9 21H15C17.8284 21 19.2426 21 20.1213 20.1213C21 19.2426 21 17.8284 21 15" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M12 3V16M12 16L16 11.625M12 16L8 11.625" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            </button>`;
+            <button class="downloadButton" title="Download">${svgIcons['download']}</button>`;
             resultsContainer.appendChild(card);
         });
         highlightCompleted();
@@ -192,9 +194,9 @@ function renderQueue(queue) {
             button = ``;
         }
         else if (task.state == 'failed') {
-            button = `<button onclick="taskAction('retry', ${task.id})">Retry</button><button onclick="taskAction('remove', ${task.id})">Remove</button>`;
+            button = `<button onclick="taskAction('retry', ${task.id})">${svgIcons['retry']}Retry</button><button onclick="taskAction('remove', ${task.id})">${svgIcons['close']}Remove</button>`;
         } else { // probably completed
-            button = `<button onclick="taskAction('remove', ${task.id})">Remove</button>`;
+            button = `<button onclick="taskAction('remove', ${task.id})">${svgIcons['close']}Remove</button>`;
         }
 
         div.innerHTML = `

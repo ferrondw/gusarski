@@ -66,21 +66,27 @@ export default class MangaDexProvider extends Provider {
     }
 
     async download(task) {
-        let { session, title, year = '0000' } = task.data;
-        let safeTitle = title.replace(/[\/:*?"<>|]/g, '');
-        let rootDir = path.join(this.basePath, 'Comics', `${safeTitle} (${year})`);
-        mkdirp.sync(rootDir);
+        try {
+            let { session, title, year = '0000' } = task.data;
+            let safeTitle = title.replace(/[\/:*?"<>|]/g, '');
+            let rootDir = path.join(this.basePath, `${safeTitle} (${year})`);
+            mkdirp.sync(rootDir);
 
-        task.addMessage(`Fetching chapter list...`);
-        let chapters = await this.fetchChapters(session);
-        task.addMessage(`Found ${chapters.length} chapters.`);
+            task.addMessage(`Fetching chapter list...`);
+            let chapters = await this.fetchChapters(session);
+            task.addMessage(`Found ${chapters.length} chapters.`);
 
-        for (let [chap] of chapters.entries()) { // let [index, chap]
-            await this.downloadChapter(chap, rootDir, safeTitle, year, task);
+            for (let chap of chapters) {
+                await this.downloadChapter(chap, rootDir, safeTitle, year, task);
+            }
+
+            task.addMessage('Download complete');
+            Logger.success(`Completed download: ${title}`);
+        } catch (e) {
+            task.addMessage(`Error: ${e.message}`);
+            Logger.error('Download error', e);
+            throw new Error('Download failed');
         }
-
-        task.addMessage('Download complete');
-        Logger.success(`Completed download: ${title}`);
     }
 
     async fetchChapters(mangaId) {
