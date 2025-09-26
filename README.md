@@ -2,53 +2,86 @@
 
 ---
 
-**Provider based Node.js media downloader which runs on a simple WebUI, so simple in fact that it has:**
-No ads, no subscriptions, no hidden fees, no shady redirects, no cloud storage, no default light mode, no fake download buttons, no captchas, no data mining, no tracking, no complicated setups, only 1 cookie and even that is optional and needs to be forcefully set my the admin.
+**Provider-based Node.js media downloader**
 
-## Features
+> [!IMPORTANT]
+> This project is in active development, thing may and probably will break a lot
+> 
+> Also restart the server every once in a while to check for updates
 
-- Provider Switching, supporting a wide range of sources for downloading all kinds of media, all organised in one place
-- One-step Setup, like really it's just one bat file lol
-- Optional Authentication, so only users with the password can interact with the server
-- Monitoring, the server has logs from current downloads, and the clients can see and manage current downloads (clients cannot remove files, there are no permanent logs, no log files will be saved to your system, it's purely in the console)
+
+# Features
+
+- Provider switching, supporting a wide range of sources for downloading all kinds of media, all organised in one place
+- One-step setup, like really it's just one bat file lol
+- Optional authentication, so only users with the password can interact with the app
+- Monitoring, the server has console logs from active downloads, clients can start and manage current downloads
 - Shortcuts, because why not
-- Mobile Support, the site will look good on all your devices
-- Customisation, with 11 themes because just light and dark aren't enough for me
-- Download Tracking, makes sure you don't download something multiple times (Shift left-clicking a search result will toggle its completed mark)
+- Mobile support, the site will look good on all your devices
+- Customisation, with 11 themes because light and dark just simply isn't enough
+- Download tracking, so you don't download the same thing twice. Shift left-clicking a result toggles its completed mark
 
 
-## Requirements
+# Screenshots
+
+<details>
+<summary>Desktop</summary>
+
+![](src/images/1.png)
+![](src/images/2.png)
+![](src/images/3.png)
+
+</details>
+
+<details>
+<summary>Mobile</summary>
+
+|||
+|-----|-----|
+|![](src/images/4.png)|![](src/images/5.png)|
+
+</details>
+
+
+# Requirements
 
 - [Node.js](https://nodejs.org/en)
-- [Git](https://git-scm.com) (and [GitHub Desktop](https://desktop.github.com/download) for ease of use, but not required)
-  
-
-## Setup
-
-1. Clone or download this repo (though I would recommend cloning it so you can get updates)
-2. Run `LAUNCH.bat`, it will check for git updates, download any missing dependencies, and start the server
-3. Open `http://localhost:3000` in your browser (or click [here](http://localhost:3000)), if you are using a custom port, just change the number after localhost:
-
-If the steps above don't work, open an issue explaining your problem and it will be resolved as soon as possible
 
 
-## Environment Variables
+# Setup
+
+1. Clone or download this repository (cloning is recommended so you can get updates easily)
+2. Run `LAUNCH.bat`. It will check for updates, install missing dependencies, and start the server
+3. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+If something goes wrong, open an issue and describe your problem. It will be looked at as soon as possible
+
+
+# Environment Variables
 
 ```sh
-# BOTH required if you want to use authentication, if any are missing, authentication will be skipped entirely
+# BOTH required if you want authentication
 AUTH_USERNAME=admin
 AUTH_PASSWORD=pass
 
-# HIGHLY recommended to put in a long random string for security, will not be used if you are not also using authentication
+# Strongly recommended to use a long random string for security
 SESSION_SECRET=secret
 
-# If the server for whatever reason does not start due to port 3000 already being in use (because that is most likely the issue), just change this around until it starts
+# If port 3000 is already in use, change this until it works
 PORT=3000
 ```
 
-All variables are optional and the server will still function correctly if there is no `.env` file at all.
+> [!NOTE]
+> All environment variables are optional. The server works even if there is no `.env` file
 
-## Disclaimer
-- All downloads will be stored in the server where it is hosted, clients cannot directly obtain downloaded files or delete them
-- This project uses webscraping to obtain data from websites, these websites are not intended to be scraped and errors can occur
-- Some providers are really error prone and downloads can fail more often then not, just click the "Retry" button in the sidebar and hope it works
+
+# Good To Know
+
+> [!NOTE]
+> Downloads are stored on the server where this is hosted. Clients cannot directly obtain or delete them
+
+> [!NOTE]
+> This project uses web scraping. The websites scraped are not designed for this purpose, so errors can and probably will occur
+
+> [!NOTE]
+> Some providers are error-prone and downloads can fail. Use the "Retry" button in the sidebar if needed
