@@ -189,7 +189,7 @@ function renderQueue(queue) {
         let lastMessage = task.progressMessages.length ? task.progressMessages[task.progressMessages.length - 1] : "Nothing here yet (；′⌒`)";
         let button;
         if (task.state === 'pending') {
-            button = `<button onclick="taskAction('force', ${task.id})">Force</button>`;
+            button = `<button onclick="taskAction('force', ${task.id})">${svgIcons['download']}Force</button>`;
         } else if (task.state === 'downloading') {
             button = ``;
         }
