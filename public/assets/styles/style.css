@@ -342,7 +342,7 @@ main {
         }
 
         &.open {
-            top: -1px;
+            top: -2px;
             transition: var(--transition);
         }
     }
@@ -579,7 +579,7 @@ main {
         .queueItem {
             background: var(--element-background);
             border: var(--element-border);
-            border-radius: var(--border-radius-inner);
+            border-radius: var(--border-radius-outer);
             padding: 16px;
             margin-bottom: 12px;
             transition: var(--transition);

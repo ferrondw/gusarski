@@ -18,7 +18,7 @@
 - Monitoring, the server has console logs from active downloads, clients can start and manage current downloads
 - Shortcuts, because why not
 - Mobile support, the site will look good on all your devices
-- Customisation, with 11 themes because light and dark just simply isn't enough
+- Customisation, with 14 themes because light and dark just simply isn't enough
 - Download tracking, so you don't download the same thing twice. Shift left-clicking a result toggles its completed mark
 
 

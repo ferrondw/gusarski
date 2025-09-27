@@ -2,13 +2,16 @@ const themes = {
     'dark': "Dark (Default)",
     'amoled': 'AMOLED',
     'dingendingen': 'DINGENDINGEN',
-    'grounded': 'Grounded',
     'water': 'Water',
     'fire': 'Fire',
     'grass': 'Grass',
     'gold': 'Gold',
     'pinkpurple': 'Pink & Purple',
     'blueorange': 'Blue & Orange',
+    'mint': 'Mint',
+    'hackerman': 'Hackerman',
+    'hue': 'Hue',
+    'danger': 'DANGER',
     'light': 'Light',
 }
 var currentTheme = localStorage.getItem('themeKey') || 'dark';
@@ -460,8 +463,7 @@ function setupThemePicker() {
     for (let key in themes) {
         let div = document.createElement('div');
         div.classList.add('themePreview', key);
-        div.innerHTML = `<h2>${themes[key]}</h2>
-                         <p>Small text</p>`;
+        div.innerHTML = `<h2>${themes[key]}</h2><p>Small text</p>`;
         let useButton = document.createElement('button');
         useButton.innerText = 'Use Theme';
         useButton.addEventListener('click', () => {

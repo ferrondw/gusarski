@@ -111,32 +111,6 @@
     --scrollbar-thumb: #999;
 }
 
-.grounded {
-    --background: #2e2d24;
-    --background-design: unset;
-    --font: 'Georgia', serif;
-    --text-transform: none;
-    --text: #e5dac2;
-    --text-semi: #b8a489;
-
-    --card-title-shadow: 0 2px 4px rgba(46, 45, 36, 0.6);
-    --card-amount-text: #d18b47;
-    --card-amount-background: rgba(209, 139, 71, 0.2);
-    --card-amount-border: 1px solid rgba(209, 139, 71, 0.3);
-
-    --border-radius-inner: 16px;
-    --border-radius-outer: 24px;
-    --border-radius-rounded: 1000px;
-
-    --element-border: 1px solid rgba(233, 218, 194, 0.2);
-    --element-border-hover: #d18b47;
-    --element-background: rgba(46, 45, 36, 0.8);
-    --element-background-hover: rgba(209, 139, 71, 0.1);
-    --sidebar-background: rgba(46, 45, 36, 0.9);
-
-    --scrollbar-thumb: #3b3325;
-}
-
 .water {
     --background: #001014;
     --background-design: radial-gradient(circle at 50% 0%, #3399FF20 0%, #000b0e 80%);
@@ -217,7 +191,7 @@
     --background: #0A100A;
     --background-design: radial-gradient(circle at 0% 0%, #20cf4630 0%, #0A100A 100%);
 
-    --font: 'Georgia', serif;
+    --font: 'Inter', sans-serif;
     --text-transform: none;
     --text: #E8F5E9;
     --text-semi: #66BB6A;
@@ -353,6 +327,189 @@
     --sidebar-background: rgba(13, 27, 42, 0.9);
     --scrollbar-thumb: #142433;
 }
+
+.mint {
+    --background: #101010;
+    --background-design: radial-gradient(circle at 70% 30%, #00ff8820 0%, transparent 70%),
+        radial-gradient(circle at 20% 80%, #0088ff20 0%, transparent 70%);
+    --font: 'Inter', sans-serif;
+    --text-transform: none;
+    --text: #d1fff2;
+    --text-semi: #8ef0ff;
+
+    --card-amount-text: #00ffaa;
+    --card-amount-background: rgba(0, 255, 170, 0.15);
+    --card-amount-border: 2px solid rgba(0, 255, 170, 0.3);
+
+    --border-radius-inner: 24px;
+    --border-radius-outer: 32px;
+    --border-radius-rounded: 1000px;
+
+    --element-border: 2px solid rgba(0, 255, 170, 0.2);
+    --element-border-hover: #00ffaa;
+    --element-background: rgba(16, 16, 16, 0.8);
+    --element-background-hover: rgba(0, 255, 255, 0.1);
+    --sidebar-background: rgba(10, 10, 10, 0.95);
+
+    --scrollbar-thumb: #00ffaa;
+}
+
+.rustic {
+    --background: #22170f;
+    --background-design: radial-gradient(circle at 0% 100%, #5a422a20 0%, transparent 40%);
+    --font: 'Georgia', serif;
+    --text-transform: none;
+    --text: #efe6dd;
+    --text-semi: #c9b6a5;
+
+    --card-text: var(--text);
+    --card-title-shadow: 0 6px 10px rgba(0, 0, 0, 0.45);
+    --card-overlay: linear-gradient(to top, rgba(34, 23, 15, 0.85) 0%, rgba(34, 23, 15, 0.5) 60%, transparent 100%);
+    --card-amount-text: #d9a066;
+    --card-amount-background: rgba(217, 160, 102, 0.14);
+    --card-amount-border: 2px solid rgba(217, 160, 102, 0.28);
+    --card-year-text: var(--text-semi);
+    --card-animation: scaleIn 0.35s ease;
+
+    --border-radius-inner: 2px;
+    --border-radius-outer: 3px;
+    --border-radius-rounded: 3px;
+
+    --element-border: 2px solid rgba(124, 85, 60, 0.18);
+    --element-border-hover: #a66f44;
+    --element-background: rgba(34, 23, 15, 0.9);
+    --element-background-hover: rgba(166, 111, 68, 0.06);
+    --element-shadow: 0 8px 10px rgba(0, 0, 0, 0.6);
+
+    --sidebar-background: rgba(28, 19, 12, 0.96);
+    --sidebar-shadow: -14px 0 28px rgba(0, 0, 0, 0.6);
+    --sidebar-inner-shadow: 0 -6px 8px rgba(0, 0, 0, 0.4);
+
+    --modal-background: #1a120acc;
+    --scrollbar-thumb: #5b4030;
+    --toast-shadow: 0 14px 36px rgba(0, 0, 0, 0.6);
+}
+
+.hackerman {
+    --background: #06120a;
+    --background-design:
+        repeating-linear-gradient(0deg, rgba(0,255,119,0.04) 0 2px, transparent 2px 32px),
+        repeating-linear-gradient(90deg, rgba(0,255,119,0.03) 0 2px, transparent 2px 32px),
+        radial-gradient(circle at 10% 80%, rgba(0,255,119,0.08) 0%, transparent 30%),
+        radial-gradient(circle at 85% 20%, rgba(0,255,119,0.06) 0%, transparent 35%);
+
+    --font: monospace;
+    --text-transform: none;
+    --text: #dfffe8;
+    --text-semi: #69f0a4;
+
+    --card-text: var(--text);
+    --card-title-shadow: 0 3px 10px rgba(0,255,119,0.25);
+    --card-overlay: linear-gradient(to top, rgba(0,20,10,0.9) 0%, rgba(0,40,20,0.5) 60%, transparent 100%);
+    --card-amount-text: #00ff77;
+    --card-amount-background: rgba(0,255,119,0.1);
+    --card-amount-border: 2px dashed rgba(0,255,119,0.35);
+    --card-year-text: var(--text-semi);
+    --card-animation: scaleIn 0.22s ease;
+
+    --border-radius-inner: 6px;
+    --border-radius-outer: 12px;
+    --border-radius-rounded: 6px;
+
+    --element-border: 1px solid rgba(0,255,119,0.1);
+    --element-border-hover: #00ff77;
+    --element-background: rgba(6,18,10,0.95);
+    --element-background-hover: rgba(0,255,119,0.05);
+
+    --sidebar-background: rgba(4,12,8,0.98);
+
+    --modal-background: #001108cc;
+    --scrollbar-thumb: #0c3d25;
+}
+
+.hue {
+    --background: #050007;
+    --background-design:
+        radial-gradient(circle at 10% 20%, rgba(255, 0, 150, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(0, 200, 255, 0.08) 0%, transparent 45%),
+        radial-gradient(ellipse at 30% 60%, rgba(255, 200, 50, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 40%, rgba(100, 255, 200, 0.05) 0%, transparent 65%),
+        radial-gradient(ellipse at 50% 50%, rgba(180, 50, 255, 0.06) 0%, transparent 70%),
+        linear-gradient(30deg, rgba(255, 0, 100, 0.05), rgba(0, 255, 200, 0.05), rgba(255, 200, 0, 0.05), rgba(100, 0, 255, 0.05), transparent),
+        radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.6) 70%, transparent 100%);
+
+    --font: 'Inter', sans-serif;
+    --text-transform: none;
+    --text: #fefefe;
+    --text-semi: #aaa3c7;
+
+    --card-text: var(--text);
+    --card-overlay: linear-gradient(to top, rgba(5, 0, 10, 0.95) 0%, rgba(20, 0, 30, 0.65) 60%, transparent 100%);
+    --card-amount-text: #ff77ff;
+    --card-amount-background: rgba(255, 119, 255, 0.12);
+    --card-amount-border: 1px solid rgba(255, 119, 255, 0.3);
+    --card-year-text: var(--text-semi);
+    --card-animation: scaleIn 0.3s ease;
+
+    --border-radius-inner: 18px;
+    --border-radius-outer: 28px;
+    --border-radius-rounded: 1000px;
+
+    --element-border: 1px solid rgba(255, 255, 255, 0.06);
+    --element-border-hover: #ff77ff;
+    --element-background: rgba(10, 0, 20, 0.75);
+    --element-background-hover: rgba(255, 119, 255, 0.08);
+
+    --sidebar-background: rgba(5, 0, 10, 0.9);
+
+    --modal-background: #050007dd;
+    --scrollbar-thumb: #1a0a2a;
+}
+
+.danger {
+    --background: #0a0a0a;
+    --background-design:
+        repeating-linear-gradient(45deg, rgba(255, 180, 0, 0.05) 0 12px, transparent 12px 24px),
+        repeating-linear-gradient(0deg, rgba(120, 90, 40, 0.05) 0 2px, transparent 2px 48px),
+        repeating-linear-gradient(90deg, rgba(120, 90, 40, 0.05) 0 2px, transparent 2px 48px),
+        radial-gradient(circle at 20% 20%, rgba(255, 180, 0, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 80% 75%, rgba(200, 100, 40, 0.06) 0%, transparent 45%);
+
+    --font: 'Inter', sans-serif;
+    --text-transform: none;
+    --text: #e5e1d8;
+    --text-semi: #b38f6b;
+
+    --card-text: var(--text);
+    --card-title-shadow: 0 2px 6px rgba(0,0,0,0.7);
+    --card-overlay: linear-gradient(to top, rgba(10, 10, 10, 0.95) 0%, rgba(10, 10, 10, 0.6) 60%, transparent 100%);
+    --card-amount-text: #d4a017;
+    --card-amount-background: rgba(212, 160, 23, 0.15);
+    --card-amount-border: 3px double rgba(212, 160, 23, 0.4);
+    --card-year-text: var(--text-semi);
+    --card-animation: scaleIn 0.28s ease;
+
+    --border-radius-inner: 4px;
+    --border-radius-outer: 8px;
+    --border-radius-rounded: 0px;
+
+    --element-border: 2px solid rgba(212, 160, 23, 0.3);
+    --element-border-hover: #d4a017;
+    --element-background: rgba(15, 15, 15, 0.95);
+    --element-background-hover: rgba(212, 160, 23, 0.1);
+    --element-shadow: 0 4px 0 rgba(0,0,0,0.6),
+                      inset 0 0 10px rgba(0,0,0,0.4);
+
+    --sidebar-background: rgba(15, 15, 15, 0.95);
+    --sidebar-shadow: -10px 0 25px rgba(0,0,0,0.6);
+    --sidebar-inner-shadow: inset 0 -6px 6px rgba(0,0,0,0.5);
+
+    --modal-background: #0a0a0acc;
+
+    --scrollbar-thumb: #2a1d12;
+    --toast-shadow: 0 12px 32px rgba(0,0,0,0.6);
+}
+
 
 .light {
     --background: #f4f7fa;
