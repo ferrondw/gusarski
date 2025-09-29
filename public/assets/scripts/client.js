@@ -142,6 +142,8 @@ async function search(overwriteQuery) {
         results.forEach(result => {
 
             let posterHTML = result.poster ? `<img src="/proxy?url=${encodeURIComponent(result.poster)}">` : defaultPoster;
+            let amountHTML = result.amount ? `<span class="amount">${result.amount}</span>` : '';
+            let yearHTML = result.year ? `<span class="year">${result.year}</span>` : '';
 
             let card = document.createElement('div');
             card.className = "card";
@@ -164,8 +166,8 @@ async function search(overwriteQuery) {
             <div class="info">
             <div class="title">${result.title || 'Unknown'}</div>
             <div class="details">
-            <span class="amount">${result.amount || '?'}</span>
-            <span class="year">${result.year || '?'}</span>
+            ${amountHTML}
+            ${yearHTML}
             </div>
             </div>
             <button class="downloadButton" title="Download">${svgIcons['download']}</button>`;
