@@ -38,7 +38,7 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
                 title: item.title, // first 4 are required {title, amount, year, poster} where poster is the direct link to an image
                 amount: item.type == 'Movie' ? 'Movie' : `${item.episodes} Episode${item.episodes == 1 ? '' : 's'}`,
                 year: item.year,
-                poster: item.poster,
+                poster: `/proxy?url=${encodeURIComponent(item.poster)}`,
 
                 session: item.session,
             }));

@@ -84,13 +84,14 @@ export default class MyrientProvider extends Provider {
                 page.click(`a[href='${task.data.href}']`)
             ]);
 
-            task.addMessage('Extracting ZIP...')
             let cleanTitle = FolderNameSanitizer.sanitize(task.data.title);
             let destDir = path.join(this.basePath, cleanTitle);
             await fs.promises.mkdir(destDir, { recursive: true });
             let zipPath = path.join(destDir, `${cleanTitle}.zip`);
-
+            
             await download.saveAs(zipPath);
+
+            task.addMessage('Extracting ZIP...');
             await fs.createReadStream(zipPath)
                 .pipe(unzipper.Extract({ path: destDir }))
                 .promise();
