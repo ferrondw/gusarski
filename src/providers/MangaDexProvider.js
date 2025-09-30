@@ -31,7 +31,7 @@ export default class MangaDexProvider extends Provider {
             const results = await Promise.all(
                 json.data.map(async m => {
                     const title = m.attributes.title.en || Object.values(m.attributes.title)[0] || 'Unknown';
-                    const year = m.attributes.year || '?';
+                    const year = m.attributes.year;
 
                     const coverName = m.relationships.find(r => r.type === 'cover_art')?.attributes?.fileName;
                     const poster = coverName ? `${this.coverBase}/${m.id}/${coverName}` : null;
@@ -53,7 +53,7 @@ export default class MangaDexProvider extends Provider {
                         title,
                         amount: `${count} Chapter${count === 1 ? '' : 's'}`,
                         year,
-                        poster,
+                        poster: `/proxy?url=${encodeURIComponent(poster)}`,
                         session: m.id
                     };
                 })
@@ -67,7 +67,7 @@ export default class MangaDexProvider extends Provider {
 
     async download(task) {
         try {
-            let { session, title, year = '0000' } = task.data;
+            let { session, title, year } = task.data;
             let safeTitle = title.replace(/[\/:*?"<>|]/g, '');
             let rootDir = path.join(this.basePath, `${safeTitle} (${year})`);
             mkdirp.sync(rootDir);
