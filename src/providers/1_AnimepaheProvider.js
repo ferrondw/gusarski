@@ -27,6 +27,26 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
         this.downloadResolutionLenience = 250; // still allows any resolution within +-X pixels of the desired resolution
     }
 
+    updateEpisodeStatusUI(task, episodeStatuses) {
+        let statusLine = Object.keys(episodeStatuses)
+            .sort((a, b) => a - b)
+            .map(ep => `${episodeStatuses[ep]}`)
+            .join('');
+        task.addMessage(`<div style="font-family:monospace;font-size:1.1em;">${statusLine}</div>`);
+    }
+
+    setEpisodeStatus(task, episodeStatuses, episodeNumber, status) {
+        let emojiMap = {
+            pending: '⚪',
+            working: '🟡',
+            downloading: '🔵',
+            done: '🟢',
+            failed: '🔴',
+        };
+        episodeStatuses[episodeNumber] = emojiMap[status] || '⚪';
+        this.updateEpisodeStatusUI(task, episodeStatuses);
+    }
+
     async search(query) { // search can do anything, as long as it returns the required fields + any additional data needed by download
         try {
             let searchUrl = `${this.baseURL}api?m=search&q=${encodeURIComponent(query)}`;
@@ -59,27 +79,33 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
             let seasonDirectory = await this.prepareDownloadDirectories(task.data);
             let episodeLinks = await this.getEpisodeLinks(task);
 
+            let episodeStatuses = {};
+            episodeLinks.forEach(ep => episodeStatuses[ep.episode] = '⚪');
+            this.updateEpisodeStatusUI(task, episodeStatuses);
+
             for (let i = 0; i < episodeLinks.length; i += this.episodeBatchLimit) { // go through all the episodes in batches
                 let episodeBatch = episodeLinks.slice(i, i + this.episodeBatchLimit);
 
-                let episodeNumbers = episodeBatch.map(({ episode }) => episode).join(', '); // logging which episodes are being downloaded
-                task.addMessage(`Downloading episodes ${episodeNumbers}`);
-
                 await Promise.all(episodeBatch.map(async ({ episode, url }) => { // Promise.all waits for ALL downloads to finish before starting the next batch
+                    this.setEpisodeStatus(task, episodeStatuses, episode, 'working');
                     let context = await browser.newContext({ acceptDownloads: true });
                     try {
                         let page = await context.newPage();
                         await page.goto(url, { waitUntil: 'networkidle' });
 
                         await this.replaceDownloadButtons(page); // default download buttons have a redirect, this method removes that
-                        await this.processEpisode(page, seasonDirectory, episode, task.addMessage); // starts the episode download and waits for it to finish
+                        this.setEpisodeStatus(task, episodeStatuses, episode, 'downloading');
+                        await this.processEpisode(page, seasonDirectory, episode, () => { }); // starts the episode download and waits for it to finish
+                        this.setEpisodeStatus(task, episodeStatuses, episode, 'done');
+                    } catch (err) {
+                        this.setEpisodeStatus(task, episodeStatuses, episode, 'failed');
+                        Logger.error(`Error in episode ${episode}`, err);
                     } finally {
                         await context.close();
                     }
                 }));
             }
 
-            task.addMessage("Download completed.");
             Logger.success(`Download completed: ${task.data.title}`);
         } catch (e) {
             Logger.error(`Error downloading ${task.data.title}`, e);
@@ -98,8 +124,6 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
     // ALL the following methods are not needed specifically for any other provider, and are just to help the process for animepahe
 
     async getEpisodeLinks(task) {
-        task.addMessage(`Getting episode links`);
-
         let pageNum = 1;
         let episodes = [];
         let nextUrl = null; // only used for checking if we're done collecting episodes
@@ -237,7 +261,6 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
         }
 
         await fs.promises.rename(tempPath, destPath);
-        addMessage(`Episode ${episodeNumber} downloaded (${(bytes / 1e6).toFixed(1)} MB)`);
 
         await popup.close();
     }
@@ -266,7 +289,6 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
                 if (popup) return popup;
             } catch (e) {
                 Logger.warning(`openPopup: attempt ${attempt + 1} failed: ${e.message}`);
-                addMessage(`Retrying ${resolution}p option (attempt ${attempt + 1})...`);
                 await page.waitForTimeout(1000); // "net::ERR_ABORTED; maybe frame was detached?", hope this will fix it, it not just remove this line
             }
         }
@@ -306,7 +328,6 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
             } catch (e) {
                 if (attempt < this.maxDownloadRetries) {
                     Logger.warning(`Download didn’t start (attempt ${attempt}): ${e.message}`);
-                    addMessage(`Download didn’t start, retrying... (attempt ${attempt})`);
                     try { // if it errors just wait a bit, this whole code block is in a for loop anyways
                         await popup.reload({ waitUntil: 'networkidle' });
                     } catch (reloadErr) {
@@ -315,7 +336,6 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
                     }
                 } else {
                     Logger.error(`All download attempts failed.`);
-                    addMessage(`All download attempts failed, skipping episode...`);
                 }
             }
         }
