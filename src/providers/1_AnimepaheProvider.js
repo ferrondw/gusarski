@@ -28,10 +28,7 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
     }
 
     updateEpisodeStatusUI(task, episodeStatuses) {
-        let statusLine = Object.keys(episodeStatuses)
-            .sort((a, b) => a - b)
-            .map(ep => `${episodeStatuses[ep]}`)
-            .join('');
+        let statusLine = Object.keys(episodeStatuses).sort((a, b) => a - b).map(ep => `${episodeStatuses[ep]}`).join(' ');
         task.addMessage(`<div style="font-family:monospace;font-size:1.1em;">${statusLine}</div>`);
     }
 
