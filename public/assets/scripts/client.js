@@ -2,17 +2,8 @@ const themes = {
     'dark': "Dark (Default)",
     'amoled': 'AMOLED',
     'dingendingen': 'DINGENDINGEN',
-    'water': 'Water',
-    'fire': 'Fire',
-    'grass': 'Grass',
     'gold': 'Gold',
-    'pinkpurple': 'Pink & Purple',
-    'blueorange': 'Blue & Orange',
-    'mint': 'Mint',
-    'hackerman': 'Hackerman',
     'hue': 'Hue',
-    'danger': 'DANGER',
-    'light': 'Light',
 }
 var currentTheme = localStorage.getItem('themeKey') || 'dark';
 
