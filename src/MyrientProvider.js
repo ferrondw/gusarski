@@ -12,7 +12,7 @@ const ALLOWED_FLAGS = ['Demo', 'Beta', 'Kiosk', 'Virtual Console', 'DLC', 'Updat
 export default class MyrientProvider extends Provider {
     constructor() {
         super();
-        this.hideBrowser = true;
+        this.hideBrowser = false;
         this.headlessBrowser = false;
         this.selectorTimeout = 10000;
         this.defaultPosterType = 'controller';
@@ -27,6 +27,8 @@ export default class MyrientProvider extends Provider {
 
             await page.focus('#search');
             await page.keyboard.type(query);
+            await page.keyboard.press('Enter');
+            await page.waitForLoadState('networkidle', { timeout: this.selectorTimeout });
 
             let rows = await page.$$('#list tbody tr:not([hidden])');
             let results = [];
