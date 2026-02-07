@@ -150,7 +150,16 @@ function broadcastTaskStateUpdated(task) {
 
     if (task.state === 'completed') {
         let name = task.data.title;
-        let msg = JSON.stringify({ type: 'downloadedItems', items: [name] });
+        let completedFile = path.join(__dirname, 'completed.txt');
+        let items = [];
+        try {
+            items = fs.readFileSync(completedFile, 'utf-8').split(/\r?\n/).filter(Boolean);
+        } catch { }
+        if (!items.includes(name)) {
+            items.push(name);
+            fs.writeFileSync(completedFile, items.join('\n') + (items.length ? '\n' : ''));
+        }
+        let msg = JSON.stringify({ type: 'downloadedItems', items });
         wss.clients.forEach(client => {
             if (client.readyState === WebSocket.OPEN) client.send(msg);
         });
