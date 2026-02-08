@@ -119,13 +119,23 @@
                         </svg>
                     </button>
                 </div>
-                <div class="modalBody">
-                    <label for="notificationTypeSelect">Notification Type:</label>
-                    <select id="notificationTypeSelect" onchange="localStorage.setItem('notificationType', this.value)">
-                        <option value="toast">Toast</option>
-                        <option value="notification">Notification</option>
-                        <option value="none">None</option>
-                    </select>
+                <div class="modalBody settings">
+                    <div class="setting">
+                        <label for="notificationTypeSelect">Notification Type:</label>
+                        <select id="notificationTypeSelect" onchange="localStorage.setItem('notificationType', this.value)">
+                            <option value="toast">Toast</option>
+                            <option value="notification">Notification</option>
+                            <option value="none">None</option>
+                        </select>
+                    </div>
+                    <div class="setting">
+                        <label for="transitionSpeedSelect">Transition Speed:</label>
+                        <select id="transitionSpeedSelect">
+                            <option value="0.25s">Normal</option>
+                            <option value="0.15s">Fast</option>
+                            <option value="0s">Off</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>

@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupThemePicker();
     refreshTheme();
     setupShortcuts();
+    setupTransitionSpeedPicker();
 
     document.getElementById('providerButton').addEventListener('click', () => {
         document.getElementById('providerPicker').classList.toggle('open');
@@ -466,6 +467,18 @@ function setupThemePicker() {
         div.appendChild(useButton);
         themesModalBody.appendChild(div);
     }
+}
+
+function setupTransitionSpeedPicker() {
+    let transitionSpeedSelect = document.getElementById('transitionSpeedSelect');
+    let savedSpeed = localStorage.getItem('transitionSpeed') || '0.3s';
+    transitionSpeedSelect.value = savedSpeed;
+    document.documentElement.style.setProperty('--transition-speed', savedSpeed);
+    transitionSpeedSelect.addEventListener('change', () => {
+        let speed = transitionSpeedSelect.value;
+        localStorage.setItem('transitionSpeed', speed);
+        document.documentElement.style.setProperty('--transition-speed', speed);
+    });
 }
 
 // clean? no. does it work? yes.

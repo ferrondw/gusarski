@@ -310,7 +310,7 @@ main {
                         width: 18px;
                         height: 18px;
                         transform-origin: center;
-                        transition: transform 220ms ease;
+                        transition: transform var(--transition-speed) ease;
                         fill: var(--text-semi);
                         transition: var(--transition);
                     }
@@ -717,7 +717,7 @@ main {
     justify-content: center;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease;
+    transition: opacity var(--transition-speed) ease;
 
     &.open {
         pointer-events: auto;
@@ -789,6 +789,23 @@ main {
             margin-top: 20px;
             max-height: 90%;
             overflow-y: auto;
+
+            &.settings {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+
+                .setting {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 12px;
+
+                    label {
+                        color: var(--text);
+                    }
+                }
+            }
 
             &#themesModalBody {
                 display: flex;
