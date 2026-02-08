@@ -190,3 +190,38 @@
     --modal-background: #050007dd;
     --scrollbar-thumb: #1a0a2a;
 }
+
+.blue {
+    --background: #080810;
+    --background-design: none;
+    --font: sans-serif;
+    --text-transform: none;
+    --text: #c8cde0;
+    --text-semi: #5c6280;
+
+    --card-text: var(--text);
+    --card-title-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+    --card-overlay: linear-gradient(to top, rgba(8, 8, 16, 0.95) 0%, rgba(8, 8, 16, 0.5) 60%, transparent 100%);
+    --card-amount-text: #7889c8;
+    --card-amount-background: rgba(120, 137, 200, 0.12);
+    --card-amount-border: 1px solid rgba(120, 137, 200, 0.2);
+    --card-year-text: var(--text-semi);
+    --card-animation: scaleIn 0.3s ease;
+
+    --border-radius-inner: 14px;
+    --border-radius-outer: 20px;
+    --border-radius-rounded: 1000px;
+    --blur: blur(20px);
+
+    --element-border: 1px solid rgba(120, 137, 200, 0.1);
+    --element-border-hover: #7889c8;
+    --element-background: rgba(20, 22, 40, 0.7);
+    --element-background-hover: rgba(120, 137, 200, 0.08);
+    --element-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+    --sidebar-background: rgba(12, 12, 24, 0.94);
+    --sidebar-shadow: -12px 0 36px rgba(0, 0, 0, 0.5);
+    --sidebar-inner-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
+
+    --scrollbar-thumb: #1c1e30;
+    --toast-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}

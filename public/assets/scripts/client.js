@@ -4,6 +4,7 @@ const themes = {
     'dingendingen': 'DINGENDINGEN',
     'gold': 'Gold',
     'hue': 'Hue',
+    'blue': 'Blue',
 }
 var currentTheme = localStorage.getItem('themeKey') || 'dark';
 
