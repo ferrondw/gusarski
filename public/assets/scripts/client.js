@@ -202,7 +202,7 @@ function renderQueue(queue) {
         <h4 class="queueTitle">${task.data.title}</h4>
         <p class="queueStatus">Status: ${task.state}</p>
         <p class="queueUpdate">${lastMessage}</p>
-        <img class="providerIcon" src="${providers[task.providerID].icon}">
+        <img class="providerIcon" src="${providers[task.providerID].icon || 'assets/images/favicon.png'}">
         <div class="queueButtons">
         ${button}
         </div>`;
@@ -407,7 +407,7 @@ async function getProviders() {
         sortedProviders[category].forEach(({ provider, index }) => {
             categoryHtml += `
                 <button class="provider" onclick="pickProvider(${index})">
-                    <img src="${provider.icon}">
+                    <img src="${provider.icon || 'assets/images/favicon.png'}">
                     <p>${provider.name}</p>
                 </button>`;
         });
@@ -436,7 +436,7 @@ async function getProviders() {
 }
 
 async function pickProvider(id) {
-    document.getElementById('currentProviderIcon').src = `${providers[id].icon}`;
+    document.getElementById('currentProviderIcon').src = `${providers[id].icon || 'assets/images/favicon.png'}`;
     document.getElementById('providerPicker').classList.remove('open');
     document.getElementById('searchQuery').placeholder = providers[id].searchPlaceholder || 'Search...'
     currentProviderID = id;
