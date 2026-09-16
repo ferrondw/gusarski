@@ -2,13 +2,10 @@
 
 ---
 
+> [!WARNING]
+> This project is so outdated the scrapers i was using no longer work, for *any* of the providers, rendering the app completely useless
+
 **Provider-based Node.js media downloader**
-
-> [!IMPORTANT]
-> This project is in active development, thing may and probably will break a lot
-> 
-> Also restart the server every once in a while to check for updates
-
 
 # Features
 
