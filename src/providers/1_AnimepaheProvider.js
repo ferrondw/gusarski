@@ -5,6 +5,17 @@ import { mkdirp } from 'mkdirp';
 import path from 'path';
 import fs from 'fs';
 
+const COOKIE = `__ddg2_=${Math.random().toString(36).slice(2, 18)}`;
+const HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/122.0.0.0 Safari/537.36",
+    Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Accept-Encoding": "gzip, deflate, br",
+    Connection: "keep-alive",
+    "Upgrade-Insecure-Requests": "1",
+    Cookie: COOKIE,
+};
+
 export default class AnimepaheProvider extends Provider { // kept the 1_ before the file to always give it priority over other providers
     constructor() {
         super();
