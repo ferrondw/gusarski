@@ -8,19 +8,39 @@ export class PlaywrightUtils {
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--lang=en-US',
+                "--disable-features=AsyncDns",
                 hideBrowser ? '--headless=new' : ''
             ]
         });
     }
 
     static async headlessFetch(url, isJson) {
-        let context = await chromium.launch({
-            headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox', '--lang=en-US']
-        });
+        const context = await chromium.launch({
+            headless: false,
+            args: [
+                "--no-sandbox",
+                "--disable-setuid-sandbox",
+                "--lang=en-US",
+                "--disable-features=AsyncDns"
+            ]
+        }
+        );
+
         let page = await context.newPage();
         await page.goto(url, { waitUntil: 'networkidle' });
-        await page.waitForSelector('#ddg-l10n-title', { state: 'detached', timeout: 10000 }).catch(() => { }); // wait for ddos guard
+        
+        await page.waitForFunction(() => {
+            const title = document.title.toLowerCase();
+            const body = document.body?.innerText.toLowerCase() || "";
+
+            return (
+                !title.includes("just a moment") &&
+                !title.includes("attention required") &&
+                !body.includes("checking your browser") &&
+                !body.includes("verify you are human")
+            );
+        }, { timeout: 120000 });
+
         let content = await page.content();
         await context.close();
 
