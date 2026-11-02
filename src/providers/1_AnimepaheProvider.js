@@ -5,43 +5,6 @@ import { mkdirp } from 'mkdirp';
 import path from 'path';
 import fs from 'fs';
 
-const COOKIE = `__ddg2_=${Math.random().toString(36).slice(2, 18)}`;
-const HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/122.0.0.0 Safari/537.36",
-    Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.9",
-    "Accept-Encoding": "gzip, deflate, br",
-    Connection: "keep-alive",
-    "Upgrade-Insecure-Requests": "1",
-    Cookie: COOKIE,
-};
-
-async function request(url, { headers = {}, type = "text" } = {}) {
-    const res = await fetch(url, {
-        headers: { ...HEADERS, ...headers },
-        redirect: "follow",
-    });
-
-    if (!res.ok) {
-        throw new Error(`HTTP ${res.status} fetching ${url}`);
-    }
-
-    if (type === "buffer") {
-        return Buffer.from(await res.arrayBuffer());
-    }
-
-    const text = await res.text();
-    if (text.toLowerCase().includes("ddos")) {
-        throw new Error("Blocked by DDoS-Guard");
-    }
-
-    if (type === "json") {
-        return JSON.parse(text);
-    }
-
-    return text;
-}
-
 export default class AnimepaheProvider extends Provider { // kept the 1_ before the file to always give it priority over other providers
     constructor() {
         super();
@@ -84,7 +47,7 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
     async search(query) { // search can do anything, as long as it returns the required fields + any additional data needed by download
         try {
             let searchUrl = `${this.baseURL}api?m=search&q=${encodeURIComponent(query)}`;
-            let data = await request(searchUrl, { type: 'json' });
+            let data = await PlaywrightUtils.headlessFetch(searchUrl, { type: 'json' });
 
             if (!data.data) return [];
 
@@ -169,7 +132,7 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
         // loading all episodes from all pages
         do {
             let url = `${this.baseURL}api?m=release&id=${task.data.session}&sort=episode_asc&page=${pageNum}`;
-            let data = await request(url, { type: 'json' });
+            let data = await PlaywrightUtils.headlessFetch(url, { type: 'json' });
             data.data.forEach(ep => { // custom data type with less bloat
                 episodes.push({ session: ep.session, episode: ep.episode, url: `${this.baseURL}play/${task.data.session}/${ep.session}` });
             });
