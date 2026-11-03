@@ -2,7 +2,8 @@ import { chromium } from "playwright";
 
 export class PlaywrightUtils {
     static newBrowser(hideBrowser) {
-        return chromium.launch({
+        return chromium.launchPersistentContext(
+            'profile', {
             headless: false,
             args: [
                 '--no-sandbox',
@@ -15,7 +16,8 @@ export class PlaywrightUtils {
     }
 
     static async headlessFetch(url, isJson) {
-        const context = await chromium.launch({
+        const context = await chromium.launchPersistentContext(
+            'profile', {
             headless: false,
             args: [
                 "--no-sandbox",
@@ -28,7 +30,7 @@ export class PlaywrightUtils {
 
         let page = await context.newPage();
         await page.goto(url, { waitUntil: 'networkidle' });
-        
+
         await page.waitForFunction(() => {
             const title = document.title.toLowerCase();
             const body = document.body?.innerText.toLowerCase() || "";
