@@ -29,7 +29,7 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
         this.baseURL = 'https://animepahe.pw/';
         this.hideBrowser = false; // hides the headful browser while downloading
         this.headlessBrowser = false; // if the browser should have GUI or run completely in the background
-        this.episodeBatchLimit = 1; // max amount of contexts the browser can start while downloading an anime
+        this.episodeBatchLimit = 3; // max amount of contexts the browser can start while downloading an anime
         this.selectorTimeout = 10000; // how long to wait on an selector (in milliseconds)
         this.downloadStartTimeout = 10000; // tries to restart the download if it doesn't start in X milliseconds
         this.maxDownloadRetries = 5; // how many times it should try to press the download button in the kwik page
@@ -80,9 +80,12 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
     }
 
     async download(task) { // download can do ANYTHING, it does not need to return anything (though it is expected to save data) + it has all fields from search.
+        let context = null;
+
         try {
             let seasonDirectory = await this.prepareDownloadDirectories(task.data);
             let episodeLinks = await this.getEpisodeLinks(task);
+            context = await PlaywrightUtils.newBrowser(this.hideBrowser);
 
             let episodeStatuses = {};
             episodeLinks.forEach(ep => episodeStatuses[ep.episode] = '⚪');
@@ -93,9 +96,9 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
 
                 await Promise.all(episodeBatch.map(async ({ episode, url }) => { // Promise.all waits for ALL downloads to finish before starting the next batch
                     this.setEpisodeStatus(task, episodeStatuses, episode, 'working');
-                    const browser = await PlaywrightUtils.newBrowser(false);
+
                     try {
-                        let page = await browser.newPage();
+                        let page = await context.newPage();
                         await page.goto(url, { waitUntil: 'networkidle' });
 
                         await this.replaceDownloadButtons(page); // default download buttons have a redirect, this method removes that
@@ -105,8 +108,6 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
                     } catch (err) {
                         this.setEpisodeStatus(task, episodeStatuses, episode, 'failed');
                         Logger.error(`Error in episode ${episode}`, err);
-                    } finally {
-                        await browser.close();
                     }
                 }));
             }
@@ -117,6 +118,7 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
             throw new Error('Error downloading');
         } finally {
             try {
+                context.close();
             } catch (e) {
                 Logger.warning("Error while closing the browser: " + e.message);
             }

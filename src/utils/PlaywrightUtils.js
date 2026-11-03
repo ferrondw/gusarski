@@ -5,6 +5,7 @@ export class PlaywrightUtils {
         return chromium.launchPersistentContext(
             'profile', {
             headless: false,
+            acceptDownloads: true,
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
