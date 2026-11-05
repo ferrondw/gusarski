@@ -14,7 +14,7 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
-const QUEUE_BATCH_LIMIT = 5;
+const QUEUE_BATCH_LIMIT = process.env.QUEUE_BATCH_LIMIT || 5;
 
 //#region Express Server Setup
 const app = express();

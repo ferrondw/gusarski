@@ -2,43 +2,7 @@
 
 ---
 
-> [!WARNING]
-> This project is so outdated the scrapers i was using no longer work, for *any* of the providers, rendering the app completely useless
-
 **Provider-based Node.js media downloader**
-
-# Features
-
-- Provider switching, supporting a wide range of sources for downloading all kinds of media, all organised in one place
-- One-step setup, like really it's just one bat file lol
-- Optional authentication, so only users with the password can interact with the app
-- Monitoring, the server has console logs from active downloads, clients can start and manage current downloads
-- Shortcuts, because why not
-- Mobile support, the site will look good on all your devices
-- Customisation, with 14 themes because light and dark just simply isn't enough
-- Download tracking, so you don't download the same thing twice. Shift left-clicking a result toggles its completed mark
-
-
-# Screenshots
-
-<details>
-<summary>Desktop</summary>
-
-![](src/images/1.png)
-![](src/images/2.png)
-![](src/images/3.png)
-
-</details>
-
-<details>
-<summary>Mobile</summary>
-
-|||
-|-----|-----|
-|![](src/images/4.png)|![](src/images/5.png)|
-
-</details>
-
 
 # Requirements
 
@@ -47,25 +11,19 @@
 
 # Setup
 
-1. Clone or download this repository (cloning is recommended so you can get updates easily)
-2. Run `LAUNCH.bat`. It will check for updates, install missing dependencies, and start the server
+1. Clone or download this repository
+2. Run `npm i`, `npx playwright install`, and `node index.js`.
 3. Open [http://localhost:3000](http://localhost:3000) in your browser
-
-If something goes wrong, open an issue and describe your problem. It will be looked at as soon as possible
 
 
 # Environment Variables
 
 ```sh
-# BOTH required if you want authentication
-AUTH_USERNAME=admin
-AUTH_PASSWORD=pass
-
-# Strongly recommended to use a long random string for security
-SESSION_SECRET=secret
-
 # If port 3000 is already in use, change this until it works
 PORT=3000
+
+# Sets the limit on how many jobs happen before they get put on pending in the queue
+QUEUE_BATCH_LIMIT=5
 ```
 
 > [!NOTE]
@@ -73,12 +31,6 @@ PORT=3000
 
 
 # Good To Know
-
-> [!NOTE]
-> Downloads are stored on the server where this is hosted. Clients cannot directly obtain or delete them
-
-> [!NOTE]
-> This project uses web scraping. The websites scraped are not designed for this purpose, so errors can and probably will occur
-
-> [!NOTE]
-> Some providers are error-prone and downloads can fail. Use the "Retry" button in the sidebar if needed
+- Downloads are stored on the server where this is hosted. Clients cannot directly obtain or delete them
+- This project uses web scraping. The websites scraped are not designed for this purpose, so errors can and probably will occur
+- Some providers are error-prone and downloads can fail. Use the "Retry" button in the sidebar if needed

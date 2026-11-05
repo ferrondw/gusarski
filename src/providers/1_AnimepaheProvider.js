@@ -5,17 +5,6 @@ import { mkdirp } from 'mkdirp';
 import path from 'path';
 import fs from 'fs';
 
-const COOKIE = `__ddg2_=${Math.random().toString(36).slice(2, 18)}`;
-const HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/122.0.0.0 Safari/537.36",
-    Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.9",
-    "Accept-Encoding": "gzip, deflate, br",
-    Connection: "keep-alive",
-    "Upgrade-Insecure-Requests": "1",
-    Cookie: COOKIE,
-};
-
 export default class AnimepaheProvider extends Provider { // kept the 1_ before the file to always give it priority over other providers
     constructor() {
         super();
@@ -29,7 +18,7 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
         this.baseURL = 'https://animepahe.pw/';
         this.hideBrowser = false; // hides the headful browser while downloading
         this.headlessBrowser = false; // if the browser should have GUI or run completely in the background
-        this.episodeBatchLimit = 3; // max amount of contexts the browser can start while downloading an anime
+        this.episodeBatchLimit = 3; // max amount of pages the browser can start while downloading an anime
         this.selectorTimeout = 10000; // how long to wait on an selector (in milliseconds)
         this.downloadStartTimeout = 10000; // tries to restart the download if it doesn't start in X milliseconds
         this.maxDownloadRetries = 5; // how many times it should try to press the download button in the kwik page
@@ -91,15 +80,13 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
             episodeLinks.forEach(ep => episodeStatuses[ep.episode] = '⚪');
             this.updateEpisodeStatusUI(task, episodeStatuses);
 
-            for (let i = 0; i < episodeLinks.length; i += this.episodeBatchLimit) { // go through all the episodes in batches
-                let episodeBatch = episodeLinks.slice(i, i + this.episodeBatchLimit);
-
-                await Promise.all(episodeBatch.map(async ({ episode, url }) => { // Promise.all waits for ALL downloads to finish before starting the next batch
+            await this.runWorkers(episodeLinks, this.episodeBatchLimit,
+                async ({ episode, url }) => {
                     this.setEpisodeStatus(task, episodeStatuses, episode, 'working');
 
                     try {
                         let page = await context.newPage();
-                        await page.goto(url, { waitUntil: 'networkidle' });
+                        await page.goto(url, { waitUntil: 'domcontentloaded' });
 
                         await this.replaceDownloadButtons(page); // default download buttons have a redirect, this method removes that
                         this.setEpisodeStatus(task, episodeStatuses, episode, 'downloading');
@@ -109,8 +96,8 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
                         this.setEpisodeStatus(task, episodeStatuses, episode, 'failed');
                         Logger.error(`Error in episode ${episode}`, err);
                     }
-                }));
-            }
+                }
+            );
 
             Logger.success(`Download completed: ${task.data.title}`);
         } catch (e) {
@@ -118,7 +105,7 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
             throw new Error('Error downloading');
         } finally {
             try {
-                context.close();
+                await context.close();
             } catch (e) {
                 Logger.warning("Error while closing the browser: " + e.message);
             }
@@ -126,6 +113,27 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
     }
 
     // ALL the following methods are not needed specifically for any other provider, and are just to help the process for animepahe
+
+    async runWorkers(items, concurrency, worker) {
+        let index = 0;
+
+        let workers = Array.from(
+            { length: Math.min(concurrency, items.length) },
+            async () => {
+                while (index < items.length) {
+                    let item = items[index++];
+
+                    try {
+                        await worker(item);
+                    } catch (err) {
+                        Logger.error('Worker failed', err);
+                    }
+                }
+            }
+        );
+
+        await Promise.all(workers);
+    }
 
     async getEpisodeLinks(task) {
         let pageNum = 1;
@@ -201,15 +209,13 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
     async processEpisode(page, seasonDir, episodeNumber, addMessage) {
         // wait for the downloads options to appear
         await page.waitForSelector('#pickDownload', { state: 'attached', timeout: this.selectorTimeout });
-        page.setDefaultTimeout(0); // resets timeouts
-        page.setDefaultNavigationTimeout(0);
 
         let options = await page.$$('#pickDownload .dropdown-item');
 
         // try to get the first download link good enough to be in the range of the desired resolution +- the resolution lenience
         let downloadOption = await this.getPreferredDownloadOption(options); // { resolution, option }
 
-        if (!downloadOption || downloadOption == null) throw new Error(`Desired resolution not available for Episode ${episodeNumber}.`);
+        if (!downloadOption) throw new Error(`Desired resolution not available for Episode ${episodeNumber}.`);
 
         // open the download page with retries
         let popup = await this.openPopup(page, downloadOption.option, downloadOption.resolution, addMessage);
@@ -239,7 +245,7 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
         // check if any bytes are coming in, if not abort after a while
         let bytes = 0;
         let lastTick = Date.now();
-        let idleLimit = 5 * 60 * 1000; // 5 minutes
+        let idleLimit = 60 * 1000; // 1 minutes
         let idleTimer = setInterval(() => {
             if (Date.now() - lastTick > idleLimit) {
                 stream.destroy(new Error("No download progress (idle timeout)"));
@@ -277,19 +283,27 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
             { timeout: this.selectorTimeout }
         );
 
-        await popup.evaluate(() => {
-            document.querySelectorAll('form')[0].submit();
+        const downloadPromise = popup.waitForEvent('download', {
+            timeout: this.downloadStartTimeout
         });
 
-        let download = await popup.waitForEvent('download', { timeout: this.downloadStartTimeout });
-        return download;
+        await popup.evaluate(() => {
+            document.querySelector('form')?.submit();
+        });
+
+        return await downloadPromise;
     }
 
     async openPopup(page, option, resolution, addMessage) {
         for (let attempt = 0; attempt < this.maxPopupRetries; attempt++) {
             try {
+                let popupPromise = page.waitForEvent('popup', {
+                    timeout: this.selectorTimeout
+                });
+
                 await option.evaluate(el => el.click());
-                let popup = await page.waitForEvent('popup', { timeout: this.selectorTimeout });
+
+                let popup = await popupPromise;
                 if (popup) return popup;
             } catch (e) {
                 Logger.warning(`openPopup: attempt ${attempt + 1} failed: ${e.message}`);
@@ -314,8 +328,8 @@ export default class AnimepaheProvider extends Provider { // kept the 1_ before 
             let resolution = parseInt(match[1], 10);
             let resolutionDifference = Math.abs(resolution - this.desiredDownloadResolution);
 
-            // only accept the download option if it's close to the desired resolution
-            if (resolutionDifference <= this.downloadResolutionLenience) {
+            // only accept the download option if it's close to the desired resolution or if it's the only option
+            if (resolutionDifference <= this.downloadResolutionLenience || options.length == 1) {
                 return {
                     resolution,
                     option
